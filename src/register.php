@@ -29,23 +29,30 @@ if (isset($_SESSION['username']))
     <!-- Form -->
     <form action="process_register.php" method="post">
         <div class="mb-3">
-            <label for="email" class="form-label">Email (Username)</label>
-            <input type="email" class="form-control" name="email" required>
+            <label for="email" class="form-label">Email</label>
+            <input type="text" class="form-control" name="email">
         </div>
 
         <div class="mb-3">
             <label for="password" class="form-label">Password</label>
-            <input type="password" class="form-control" name="password" required>
+            <input type="password" class="form-control" name="password">
+            <ul>
+                <li>At least eight characters long </li>
+                <li>At least one uppercase letter </li>
+                <li>At least one lowercase letter </li>
+                <li>At least one numeric character </li>
+                <li>At least one special character </li>
+            </ul>
         </div>
 
         <div class="mb-3">
             <label for="first_name" class="form-label">First Name</label>
-            <input type="text" class="form-control" name="first_name" required>
+            <input type="text" class="form-control" name="first_name">
         </div>
 
         <div class="mb-3">
             <label for="last_name" class="form-label">Last Name</label>
-            <input type="text" class="form-control" name="last_name" required>
+            <input type="text" class="form-control" name="last_name">
         </div>
         
         <!-- Register Button -->

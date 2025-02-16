@@ -9,25 +9,24 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] === "POST") 
 {
-    $email      = trim($_POST["email"]);
-    $password   = $_POST["password"];
-    $first_name = trim($_POST["first_name"]);
-    $last_name  = trim($_POST["last_name"]);
+    $email          = trim($_POST["email"]);
+    $password       = $_POST["password"];
+    $first_name     = trim($_POST["first_name"]);
+    $last_name      = trim($_POST["last_name"]);
+    $error_message  = "";
 
-    // Validate email format
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) 
+    // Validate Email
+    if (!is_valid_email($email, $error_message)) 
     {
-        $_SESSION['error'] = "Invalid email format.";
+        $_SESSION['error'] = $error_message;
         header("Location: register.php");
         exit();
     }
 
     // Validate password complexity
-    if (!validate_password($password)) 
+    if (!validate_password($password, $error_message)) 
     {
-        $_SESSION['error'] = "Password must be at least 8 characters long, 
-                              include one uppercase, one lowercase, 
-                              one number, and one special character.";
+        $_SESSION['error'] = $error_message;
         header("Location: register.php");
         exit();
     }
