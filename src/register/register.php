@@ -60,7 +60,7 @@ if (isset($_SESSION['username']))
     </form>
     <!-- Form END -->
     
-    <p class="mt-3">Already have an account? <a href="login.php">Login here</a></p>
+    <p class="mt-3">Already have an account? <a href="/login/login.php">Login here</a></p>
 
     <?php include("../inc_footer.php"); ?>
     <!-- Registration Page END -->
