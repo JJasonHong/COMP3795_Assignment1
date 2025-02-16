@@ -1,13 +1,15 @@
 <?php session_start(); ?>
 
 <!-- Require/Include -->
-<?php require_once "inc_db_params.php"; ?>
-<?php include "./inc_header.php"; ?>
+<?php require_once "../inc_db_params.php"; ?>
+<?php require_once "../utils.php"; ?>
+<?php require_once "../inc_header.php"; ?>
+
 
 <!-- Check if User is already logged in -->
 <?php 
 if (isset($_SESSION['username'])) {
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit();
 }
 ?>
@@ -24,7 +26,7 @@ if (isset($_SESSION['error'])) {
 ?>
 
 <!-- Form -->
-<form action="process-login.php" method="post">
+<form action="process_login.php" method="post">
     <div class="mb-3">
         <label for="email" class="form-label">Email (Username)</label>
         <input type="email" class="form-control" name="email" required>
@@ -42,5 +44,5 @@ if (isset($_SESSION['error'])) {
 
 <p class="mt-3">Don't have an account? <a href="register.php">Register here</a></p>
 
-<?php include("./inc_footer.php"); ?>
+<?php include("../inc_footer.php"); ?>
 <!-- Login Page END -->

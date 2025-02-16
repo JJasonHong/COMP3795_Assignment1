@@ -1,3 +1,6 @@
+<?php session_start(); ?>
+
+
 <?php include("./inc_header.php"); ?>
 <?php include("./inc_db_params.php"); ?>
 
@@ -5,6 +8,15 @@
 <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+<!-- Welcome Message START -->
+<?php if (isset($_SESSION['username'])): ?>
+    <p class="alert alert-success">Welcome, <strong><?php echo htmlspecialchars($_SESSION['username']); ?></strong>!</p>
+    <p><a href="logout/logout.php" class="btn btn-danger">Logout</a></p>
+<?php else: ?>
+    <p class="alert alert-info">You are not logged in.</p>
+<?php endif; ?>
+<!-- Welcome Message END -->
 
 <h1>List of Blog Posts</h1>
 
@@ -99,9 +111,10 @@ if ($result['count'] == 0 && count($users) >= 3)
                     <li><a href="javascript:;">Latest news</a></li>
                     <li><a href="javascript:;">Updates</a></li>
                     <li class="nav-divider"></li>
-                    <li><a href="javascript:;"><i class="glyphicon glyphicon-off"></i> Sign in</a></li>
+                    <!-- Login button -->
+                    <li><a href="/login/login.php">Login</a></li>
                     <!-- Registration Button -->
-                    <li><a href="register.php" class="btn btn-small btn-primary">Register</a></li>
+                    <li><a href="/register/register.php">Register</a></li>
                 </ul>
             </nav>
             <div><h2 class="add">Space for somthing</h2></div>

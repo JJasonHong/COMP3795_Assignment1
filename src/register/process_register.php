@@ -1,11 +1,21 @@
 <?php session_start();?>
 
 <!-- Require/Include -->
-<?php require_once "inc_db_params.php";?>
-<?php require_once "utils.php";?>
+<?php require_once "../inc_db_params.php"; ?>
+<?php require_once "../utils.php"; ?>
 
 
 <!-- Process Registration -->
+<?php 
+if (isset($_SESSION['username'])) 
+{
+    // TODO: NOT WORKING
+   $_SESSION[$error_message] = "You're already signed in, please log out first";
+    header("Location: ../index.php");
+    exit();
+}
+?>
+
 <?php
 if ($_SERVER["REQUEST_METHOD"] === "POST") 
 {
@@ -36,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST")
 
     try 
     {
-        $db = new PDO("sqlite:blog3795.sqlite");
+        $db = new PDO("sqlite:../blog3795.sqlite");
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         // Check if email already exists
@@ -55,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST")
         $stmt->execute([$email, $hashed_password, $first_name, $last_name]);
 
         $_SESSION['message'] = "Registration successful! Waiting for admin approval.";
-        header("Location: login.php");
+        header("Location: ../login.php");
         exit();
     } 
     

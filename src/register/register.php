@@ -1,15 +1,15 @@
 <?php session_start();?>
 
 <!-- Require/Include -->
-<?php require_once  "inc_db_params.php";?>
-<?php include       ("./inc_header.php"); ?>
-<?php require_once  "utils.php";?>
+<?php require_once "../inc_db_params.php"; ?>
+<?php include       ("../inc_header.php"); ?>
+<?php require_once  "../utils.php";?>
 
 <!-- Check if User is already logged in -->
 <?php 
 if (isset($_SESSION['username'])) 
 {
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit();
 }
 ?>
@@ -62,5 +62,5 @@ if (isset($_SESSION['username']))
     
     <p class="mt-3">Already have an account? <a href="login.php">Login here</a></p>
 
-    <?php include("./inc_footer.php"); ?>
+    <?php include("../inc_footer.php"); ?>
     <!-- Registration Page END -->
