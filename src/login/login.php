@@ -39,6 +39,7 @@ if (isset($_SESSION['error'])) {
     
     <!-- Login Button -->
     <button type="submit" class="btn btn-primary">Login</button>
+    <a href="/" class="btn btn-small btn-primary">Back</a>
 </form>
 <!-- Form END -->
 

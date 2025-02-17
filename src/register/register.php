@@ -57,6 +57,7 @@ if (isset($_SESSION['username']))
         
         <!-- Register Button -->
         <button type="submit" class="btn btn-primary">Register</button>
+        <a href="/" class="btn btn-small btn-primary">Back</a>
     </form>
     <!-- Form END -->
     
