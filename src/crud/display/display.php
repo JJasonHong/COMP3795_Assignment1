@@ -1,36 +1,45 @@
 <?php include("../../inc_header.php"); ?>
 <?php include("../../inc_db_params.php"); ?>
 
-<h1>Display Blog Post</h1>
+<h1>Display Article</h1>
 
 <?php
 // Initialize variables
-$postId = $title = $slug = $content = $created_at = $updated_at = "";
+$articleId = $title = $body = $createDate = $startDate = $endDate = $contributorUsername = $authorName = "";
 
 if (isset($_GET['id'])) {
-    // Get post id from URL
+    // Get article id from URL
     $id = $_GET['id'];
 
-    // Prepare an SQL statement to fetch the post data
-    $stmt = $db->prepare("SELECT * FROM Posts WHERE id = :id");
+    // Prepare an SQL statement to fetch the article data with author name
+    $stmt = $db->prepare("
+        SELECT 
+            a.*,
+            u.firstName || ' ' || u.lastName as authorName
+        FROM Articles a
+        LEFT JOIN Users u ON a.ContributorUsername = u.username
+        WHERE a.ArticleId = :id
+    ");
 
     if ($stmt) {
-        // Bind the post ID parameter as an integer
+        // Bind the article ID parameter as an integer
         $stmt->bindValue(':id', $id, SQLITE3_INTEGER);
 
         // Execute the query
         $result = $stmt->execute();
 
-        // Fetch the post data
+        // Fetch the article data
         if ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-            $postId     = $row['id'];
-            $title      = $row['title'];
-            $slug       = $row['slug'];
-            $content    = $row['content'];
-            $created_at = $row['created_at'];
-            $updated_at = $row['updated_at'];
+            $articleId = $row['ArticleId'];
+            $title = $row['Title'];
+            $body = $row['Body'];
+            $createDate = $row['CreateDate'];
+            $startDate = $row['StartDate'];
+            $endDate = $row['EndDate'];
+            $contributorUsername = $row['ContributorUsername'];
+            $authorName = $row['authorName'];
         } else {
-            echo "<p class='alert alert-danger'>Blog post not found.</p>";
+            echo "<p class='alert alert-danger'>Article not found.</p>";
         }
 
         // Finalize the result set
@@ -44,32 +53,31 @@ if (isset($_GET['id'])) {
 }
 ?>
 
-<table class="table table-striped">
-    <tr>
-        <td><strong>Post ID:</strong></td>
-        <td><?php echo htmlspecialchars($postId); ?></td>
-    </tr>
-    <tr>
-        <td><strong>Title:</strong></td>
-        <td><?php echo htmlspecialchars($title); ?></td>
-    </tr>
-    <tr>
-        <td><strong>Slug:</strong></td>
-        <td><?php echo htmlspecialchars($slug); ?></td>
-    </tr>
-    <tr>
-        <td><strong>Content:</strong></td>
-        <td><?php echo nl2br(htmlspecialchars($content)); ?></td>
-    </tr>
-    <tr>
-        <td><strong>Created At:</strong></td>
-        <td><?php echo htmlspecialchars($created_at); ?></td>
-    </tr>
-    <tr>
-        <td><strong>Updated At:</strong></td>
-        <td><?php echo htmlspecialchars($updated_at); ?></td>
-    </tr>
-</table>
+<div class="blogShort">
+    <h1><?php echo htmlspecialchars($title); ?></h1>
+    <img src="http://via.placeholder.com/150" alt="post img" class="pull-left img-responsive thumb margin10 img-thumbnail">
+    <article>
+        <?php echo $body; // Don't use htmlspecialchars here since we want to render HTML ?>
+        <p class="text-muted">
+            <small>Posted by: <?php echo htmlspecialchars($authorName); ?></small>
+            <br>
+            <small>Created on: <?php echo htmlspecialchars($createDate); ?></small>
+            <br>
+            <small>Valid from: <?php echo htmlspecialchars($startDate); ?> 
+                   to: <?php echo htmlspecialchars($endDate); ?></small>
+        </p>
+    </article>
+    <div class="pull-right">
+        <?php if (isset($_SESSION['username']) && 
+                 (strtolower($_SESSION['role']) === 'admin' || 
+                  $_SESSION['username'] === $contributorUsername)): ?>
+            <a href="/crud/update/update.php?id=<?php echo urlencode($articleId); ?>" 
+               class="btn btn-warning marginBottom10">Edit</a>
+            <a href="/crud/delete/delete.php?id=<?php echo urlencode($articleId); ?>" 
+               class="btn btn-danger marginBottom10">Delete</a>
+        <?php endif; ?>
+    </div>
+</div>
 
 <br />
 <a href="../../index.php" class="btn btn-small btn-primary">&lt;&lt; BACK</a>

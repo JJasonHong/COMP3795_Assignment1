@@ -1,6 +1,15 @@
-<?php include("../../inc_header.php"); ?>
+<?php 
+session_start();
+include("../../inc_header.php"); 
 
-<h1>Create New Blog Post</h1>
+// Check if user is logged in and is either admin or contributor
+if (!isset($_SESSION['username'])) {
+    header("Location: ../../login/login.php");
+    exit();
+}
+?>
+
+<h1>Create New Article</h1>
 
 <div class="row">
     <div class="col-md-6">
@@ -11,20 +20,26 @@
                 <input type="text" class="form-control" name="Title" id="Title" required />
             </div>
 
-            <!-- Slug Field (a URL-friendly version of the title) -->
+            <!-- Body Field -->
             <div class="form-group">
-                <label for="Slug" class="control-label">Slug</label>
-                <input type="text" class="form-control" name="Slug" id="Slug" required />
+                <label for="Body" class="control-label">Body</label>
+                <textarea class="form-control" name="Body" id="Body" rows="8" required></textarea>
             </div>
 
-            <!-- Content Field -->
+            <!-- Start Date Field -->
             <div class="form-group">
-                <label for="Content" class="control-label">Content</label>
-                <textarea class="form-control" name="Content" id="Content" rows="8" required></textarea>
+                <label for="StartDate" class="control-label">Start Date</label>
+                <input type="date" class="form-control" name="StartDate" id="StartDate" required />
             </div>
 
-            <!-- Hidden UserId (assign a default user for now) -->
-            <input type="hidden" name="UserId" value="1" />
+            <!-- End Date Field -->
+            <div class="form-group">
+                <label for="EndDate" class="control-label">End Date</label>
+                <input type="date" class="form-control" name="EndDate" id="EndDate" required />
+            </div>
+
+            <!-- Hidden ContributorUsername field -->
+            <input type="hidden" name="ContributorUsername" value="<?php echo htmlspecialchars($_SESSION['username']); ?>" />
 
             <div class="form-group">
                 <a href="../../index.php" class="btn btn-small btn-primary">&lt;&lt; BACK</a>
