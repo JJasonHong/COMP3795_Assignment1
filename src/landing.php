@@ -16,7 +16,7 @@
     <div class="container">
 
         <!-- Left Section (Row with Two Columns) -->
-        <div class="col text-center">
+        <div class="col text-center"> 
             <a class="navbar-brand" href="#" id="navbar-home">Home</a>
         </div>
 

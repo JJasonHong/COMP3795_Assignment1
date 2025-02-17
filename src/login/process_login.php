@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST")
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $email;
                 $_SESSION['role'] = $user['role']; // This will preserve the exact case from database
-                header("Location: ../index.php");
+                header("Location: ../main.php");
                 exit();
             } 
             

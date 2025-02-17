@@ -1,185 +1,80 @@
 <?php session_start(); ?>
-
-<!-- Require/Include -->
 <?php include("./inc_header.php"); ?>
 <?php include("./inc_db_params.php"); ?>
-<?php include("./seed.php")?>
+<?php include("./seed.php"); ?>
 
-<!-- Welcome Message START -->
-<?php if (isset($_SESSION['username'])): ?>
-    <p class="alert alert-success">Welcome, <strong><?php echo htmlspecialchars($_SESSION['username']); ?></strong>!</p>
-    <p><a href="logout/logout.php" class="btn btn-danger">Logout</a></p>
-<?php else: ?>
-    <p class="alert alert-info">You are not logged in.</p>
-<?php endif; ?>
-<!-- Welcome Message END -->
+<?php 
+if (isset($_SESSION['username'])) {
+    header("Location: ../index.php");
+    exit();
+}
+?>
 
-<h1>List of Blog Posts</h1>
+<?php
+if (isset($_SESSION['error'])) {
+    echo '<div class="alert alert-danger">' . $_SESSION['error'] . '</div>';
+    unset($_SESSION['error']);
+}
+?>
 
-<p>
-    <a href="./crud/create/create.php" class="btn btn-small btn-success">Create New Post</a>
-</p>
-
-<!-- Blog Layout Container -->
-<div class="container">
-    <div id="blog" class="row">
-        <!-- Sidebar -->
-        <div class="col-sm-2 paddingTop20">
-        <nav class="nav-sidebar">
-        <ul class="nav">
-            <?php if (isset($_SESSION['username'])): ?>
-                <!-- Show these items only when logged in -->
-                <?php if (isset($_SESSION['role']) && ($_SESSION['role'] === 'Admin' || $_SESSION['role'] === 'admin')): ?>
-                    <li>
-                        <a href="admin/manage_users.php" class="btn btn-warning">
-                            <i class="glyphicon glyphicon-cog"></i> Admin Panel
-                        </a>
-                    </li>
-                <?php endif; ?>
-                <li><a href="logout/logout.php" class="btn btn-danger">Logout</a></li>
-            <?php else: ?>
-                <!-- Show these items when not logged in -->
-                <li><a href="login/login.php">Login</a></li>
-                <li><a href="register/register.php">Register</a></li>
-            <?php endif; ?>
-            <li class="nav-divider"></li>
-            <li class="active"><a href="javascript:;"><span class="glyphicon glyphicon-star"></span> News</a></li>
-            <li><a href="javascript:;">Latest news</a></li>
-            <li><a href="javascript:;">Updates</a></li>
-        </ul>
-    </nav>
-            <div><h2 class="add">Space for somthing</h2></div>
-        </div>
-
-        <!-- Blog Posts -->
-        <div class="col-md-10">
-            <?php
-            if ($db !== FALSE) {
-                // Query to fetch all posts along with the author's username.
-                $SQLstring = "
-                    SELECT 
-                        a.ArticleId, 
-                        a.Title, 
-                        a.Body, 
-                        a.CreateDate, 
-                        a.StartDate,
-                        a.EndDate,
-                        a.ContributorUsername,
-                        u.firstName || ' ' || u.lastName as authorName
-                    FROM Articles a
-                    LEFT JOIN Users u ON a.ContributorUsername = u.username
-                    WHERE date('now') BETWEEN a.StartDate AND a.EndDate
-                    ORDER BY a.CreateDate DESC
-                ";
-                $QueryResult = $db->query($SQLstring);
-
-                if ($QueryResult) {
-                    while ($row = $QueryResult->fetchArray(SQLITE3_ASSOC)) {
-                        ?>
-                        <div class="blogShort">
-                            <h1><?php echo htmlspecialchars($row['Title']); ?></h1>
-                            <!-- Placeholder image; replace with your own image source if available -->
-                            <img src="http://via.placeholder.com/150" alt="post img" class="pull-left img-responsive thumb margin10 img-thumbnail">
-                            <article>
-                                <p>
-                                    <?php 
-                                    // Display a snippet (first 150 characters) of the content
-                                    $snippet = substr($row['Body'], 0, 150);
-                                    echo htmlspecialchars($snippet) . (strlen($row['Body']) > 150 ? "..." : "");
-                                    ?>
-                                </p>
-                                <p class="text-muted">
-                                    <small>Posted by: <?php echo htmlspecialchars($row['authorName']); ?></small>
-                                </p>
-                            </article>
-                            <div class="pull-right">
-                                <a class="btn btn-blog marginBottom10" href="/crud/display/display.php?id=<?php echo urlencode($row['ArticleId']); ?>">READ MORE</a>
-                                
-                                <?php if (isset($_SESSION['user_id']) && 
-                                         (strtolower($_SESSION['role']) === 'admin' || 
-                                          $_SESSION['user_id'] === $row['ContributorUsername'])): ?>
-                                    <a href="/crud/update/update.php?id=<?php echo urlencode($row['ArticleId']); ?>" 
-                                       class="btn btn-warning marginBottom10">Edit</a>
-                                    <a href="/crud/delete/delete.php?id=<?php echo urlencode($row['ArticleId']); ?>" 
-                                       class="btn btn-danger marginBottom10">Delete</a>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                        <?php
-                    }
-                    echo '<div class="col-md-12 gap10"></div>';
-                } else {
-                    echo "<p class='alert alert-danger'>Error: Unable to fetch post data.</p>";
-                }
-                // Close the database connection.
-                $db->close();
-            }
-            ?>
-        </div>
-    </div>
-</div>
-
-<a href="/" class="btn btn-small btn-primary">&lt;&lt; BACK</a>
-
-<!-- Inline CSS for styling the blog layout -->
+<!-- Inline CSS for a warm background, full viewport height, and fixed footer -->
 <style>
-    .blogShort { 
-        border-bottom: 1px solid #ddd;
-        padding-bottom: 20px;
-        margin-bottom: 20px;
-    }
-    .add { 
-        background: #333; 
-        padding: 10%; 
-        height: 300px; 
-        color: #fff;
-        text-align: center;
-    }
-    .nav-sidebar { 
-        width: 100%;
-        padding: 8px 0; 
-        border-right: 1px solid #ddd;
-    }
-    .nav-sidebar a {
-        color: #333;
-        -webkit-transition: all 0.08s linear;
-        -moz-transition: all 0.08s linear;
-        -o-transition: all 0.08s linear;
-        transition: all 0.08s linear;
-    }
-    .nav-sidebar .active a { 
-        cursor: default;
-        background-color: #34ca78; 
-        color: #fff; 
-    }
-    .nav-sidebar .active a:hover {
-        background-color: #37D980;   
-    }
-    .nav-sidebar .text-overflow a,
-    .nav-sidebar .text-overflow .media-body {
-        white-space: nowrap;
-        overflow: hidden;
-        -o-text-overflow: ellipsis;
-        text-overflow: ellipsis; 
-    }
-    .btn-blog {
-        color: #ffffff;
-        background-color: #37d980;
-        border-color: #37d980;
-        border-radius: 0;
-        margin-bottom: 10px;
-    }
-    .btn-blog:hover,
-    .btn-blog:focus,
-    .btn-blog:active,
-    .btn-blog.active,
-    .open .dropdown-toggle.btn-blog {
-        color: white;
-        background-color: #34ca78;
-        border-color: #34ca78;
-    }
-    h2 { color: #34ca78; }
-    .margin10 { margin-bottom: 10px; margin-right: 10px; }
+  html, body {
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
+  }
+  body {
+    background-color: #fff4e6; /* Warm, creamy background color */
+  }
+  /* Fixed footer styling */
+  .fixed-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #f8f9fa; /* Light gray background (adjust as needed) */
+    text-align: center;
+    padding: 1rem 0;
+  }
 </style>
 
-<?php include("./inc_footer.php"); ?>
+<!-- Main content container filling the viewport -->
+<div class="container d-flex align-items-center justify-content-center vh-100">
+  <div class="row align-items-center g-lg-5 py-5">
+    <div class="col-lg-7 text-center text-lg-start">
+      <h1 class="display-4 fw-bold lh-1 text-body-emphasis mb-3">
+        COMP3975 Assignment 1
+      </h1>
+      <p class="col-lg-10 fs-4">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro libero rem corrupti natus reiciendis obcaecati? Voluptatibus deserunt magni at asperiores, laborum ullam ut tempora facere aliquid deleniti ad nulla in!
+      </p>
+    </div>
+    <div class="col-md-10 mx-auto col-lg-5">
+      <form class="p-4 p-md-5 border rounded-3 bg-body-tertiary">
+        <div class="form-floating mb-3">
+          <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+          <label for="floatingInput">Email address</label>
+        </div>
+        <div class="form-floating mb-3">
+          <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+          <label for="floatingPassword">Password</label>
+        </div>
+        <div class="checkbox mb-3">
+          <!-- Additional checkbox content can be added here if needed -->
+        </div>
+        <button class="w-100 btn btn-lg btn-primary" type="button" onclick="window.location.href='/register/register.php'">
+          Sign up
+        </button>
+        <hr class="my-4">
+        <small class="text-body-secondary">
+          By clicking Sign up, you agree to the terms of use.
+        </small>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Fixed footer -->
+<footer class="fixed-footer">
+  <?php include("./inc_footer.php"); ?>
+</footer>
