@@ -25,18 +25,29 @@
     <div id="blog" class="row">
         <!-- Sidebar -->
         <div class="col-sm-2 paddingTop20">
-            <nav class="nav-sidebar">
-                <ul class="nav">
-                    <li class="active"><a href="javascript:;"><span class="glyphicon glyphicon-star"></span> News</a></li>
-                    <li><a href="javascript:;">Latest news</a></li>
-                    <li><a href="javascript:;">Updates</a></li>
-                    <li class="nav-divider"></li>
-                    <!-- Login button -->
-                    <li><a href="/login/login.php">Login</a></li>
-                    <!-- Registration Button -->
-                    <li><a href="/register/register.php">Register</a></li>
-                </ul>
-            </nav>
+        <nav class="nav-sidebar">
+        <ul class="nav">
+            <?php if (isset($_SESSION['username'])): ?>
+                <!-- Show these items only when logged in -->
+                <?php if (isset($_SESSION['role']) && ($_SESSION['role'] === 'Admin' || $_SESSION['role'] === 'admin')): ?>
+                    <li>
+                        <a href="admin/manage_users.php" class="btn btn-warning">
+                            <i class="glyphicon glyphicon-cog"></i> Admin Panel
+                        </a>
+                    </li>
+                <?php endif; ?>
+                <li><a href="logout/logout.php" class="btn btn-danger">Logout</a></li>
+            <?php else: ?>
+                <!-- Show these items when not logged in -->
+                <li><a href="login/login.php">Login</a></li>
+                <li><a href="register/register.php">Register</a></li>
+            <?php endif; ?>
+            <li class="nav-divider"></li>
+            <li class="active"><a href="javascript:;"><span class="glyphicon glyphicon-star"></span> News</a></li>
+            <li><a href="javascript:;">Latest news</a></li>
+            <li><a href="javascript:;">Updates</a></li>
+        </ul>
+    </nav>
             <div><h2 class="add">Space for somthing</h2></div>
         </div>
 

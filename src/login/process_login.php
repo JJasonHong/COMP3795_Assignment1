@@ -14,20 +14,30 @@ if ($_SERVER["REQUEST_METHOD"] === "POST")
         $db = new PDO("sqlite:../blog3795.sqlite");
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        // Fetch user by email
-        $stmt = $db->prepare("SELECT id, password FROM Users WHERE username = ?");
+        // Fetch user by email - now including role and isApproved
+        $stmt = $db->prepare("SELECT id, password, role, isApproved FROM Users WHERE username = ?");
         $stmt->execute([$email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user && password_verify($password, $user['password'])) 
         {
-            // Successful login
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $email;
-            header("Location: ../index.php");
-            exit();
+            // Check if user is admin or approved
+            if (strtolower($user['role']) === 'admin' || $user['isApproved']) 
+            {
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $email;
+                $_SESSION['role'] = $user['role']; // This will preserve the exact case from database
+                header("Location: ../index.php");
+                exit();
+            } 
+            
+            else 
+            {
+                $_SESSION['error'] = "Your account is pending approval.";
+                header("Location: login.php");
+                exit();
+            }
         } 
-        
         else 
         {
             // Invalid credentials

@@ -1,10 +1,10 @@
 <?php 
+session_start(); // Add this at the top
 include("../inc_header.php");
 include("../inc_db_params.php");
 
-// Check if user is admin
-// session_start();
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+// Update role check to handle case sensitivity
+if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['Admin', 'admin'])) {
     header("Location: ../index.php");
     exit();
 }
@@ -16,20 +16,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $action = $_POST['action'];
         
         if ($action === 'approve') {
-            $stmt = $db->prepare("UPDATE Users SET is_approved = 1 WHERE id = :id");
+            // Fix: Changed is_approved to isApproved to match the database schema
+            $stmt = $db->prepare("UPDATE Users SET isApproved = 1 WHERE id = :id");
         } elseif ($action === 'change_role') {
             $new_role = $_POST['new_role'];
             $stmt = $db->prepare("UPDATE Users SET role = :role WHERE id = :id");
             $stmt->bindValue(':role', $new_role, SQLITE3_TEXT);
         }
         
-        $stmt->bindValue(':id', $user_id, SQLITE3_INTEGER);
-        $stmt->execute();
+        if ($stmt) {
+            $stmt->bindValue(':id', $user_id, SQLITE3_INTEGER);
+            $stmt->execute();
+        }
     }
 }
 
-// Fetch all users
-$users = $db->query("SELECT * FROM Users ORDER BY created_at DESC");
+// Fix column names in the query to match your schema
+$users = $db->query("SELECT id, username, firstName, lastName, role, isApproved FROM Users ORDER BY registrationDate DESC");
 ?>
 
 <style>
@@ -54,8 +57,9 @@ $users = $db->query("SELECT * FROM Users ORDER BY created_at DESC");
 <table class="table">
     <thead>
         <tr>
-            <th>Username</th>
-            <th>Email</th>
+            <th>Username (Email)</th>
+            <th>First Name</th>
+            <th>Last Name</th>
             <th>Role</th>
             <th>Status</th>
             <th>Actions</th>
@@ -65,11 +69,12 @@ $users = $db->query("SELECT * FROM Users ORDER BY created_at DESC");
         <?php while ($user = $users->fetchArray(SQLITE3_ASSOC)): ?>
         <tr>
             <td><?php echo htmlspecialchars($user['username']); ?></td>
-            <td><?php echo htmlspecialchars($user['email']); ?></td>
+            <td><?php echo htmlspecialchars($user['firstName']); ?></td>
+            <td><?php echo htmlspecialchars($user['lastName']); ?></td>
             <td><?php echo htmlspecialchars($user['role']); ?></td>
-            <td><?php echo $user['is_approved'] ? 'Approved' : 'Pending'; ?></td>
+            <td><?php echo $user['isApproved'] ? 'Approved' : 'Pending'; ?></td>
             <td>
-                <?php if (!$user['is_approved']): ?>
+                <?php if (!$user['isApproved']): ?>
                 <form method="POST" style="display: inline;">
                     <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
                     <input type="hidden" name="action" value="approve">
