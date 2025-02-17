@@ -66,6 +66,8 @@ if ($result['count'] == 0 && count($users) >= 3)
             ({$users[0]}, 'Getting Started with Blogging', 'getting-started', 'Welcome to the blogging world! This post will guide you through the basics.'),
             ({$users[1]}, 'My Daily Routine', 'my-daily-routine', 'A glimpse into my daily life and how I stay productive.'),
             ({$users[2]}, 'Life Hacks for Efficiency', 'life-hacks', 'Here are some useful tricks to make life easier and more efficient.');
+             ('a@a.a', '".password_hash('P@$$w0rd', PASSWORD_BCRYPT)."', 'Admin', 'User', datetime('now'), 1, 'Admin'),
+                ('c@c.c', '".password_hash('P@$$w0rd', PASSWORD_BCRYPT)."', 'Contributor', 'User', datetime('now'), 1, 'Contributor');
     ";
     $db->exec($SQL_insert_posts);
 }
