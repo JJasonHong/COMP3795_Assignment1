@@ -28,19 +28,6 @@ if ($db) {
     );";
     $db->exec($SQL_create_post_table);
 
-    // Create the Articles table with the new structure
-    $SQL_create_article_table = "CREATE TABLE IF NOT EXISTS Articles (
-        ArticleId INTEGER PRIMARY KEY AUTOINCREMENT,
-        Title TEXT NOT NULL,
-        Body TEXT NOT NULL,
-        CreateDate DATETIME DEFAULT CURRENT_TIMESTAMP,
-        StartDate DATE NOT NULL,
-        EndDate DATE NOT NULL,
-        ContributorUsername TEXT NOT NULL,
-        FOREIGN KEY (ContributorUsername) REFERENCES Users(username)
-    );";
-    $db->exec($SQL_create_article_table);
-
     // Insert default users if the Users table is empty.
     $SQL_check_user_empty = "SELECT COUNT(*) as count FROM Users";
     $result = $db->querySingle($SQL_check_user_empty, true);
@@ -79,32 +66,9 @@ if ($result['count'] == 0 && count($users) >= 3)
             ({$users[0]}, 'Getting Started with Blogging', 'getting-started', 'Welcome to the blogging world! This post will guide you through the basics.'),
             ({$users[1]}, 'My Daily Routine', 'my-daily-routine', 'A glimpse into my daily life and how I stay productive.'),
             ({$users[2]}, 'Life Hacks for Efficiency', 'life-hacks', 'Here are some useful tricks to make life easier and more efficient.');
-             ('a@a.a', '".password_hash('P@$$w0rd', PASSWORD_BCRYPT)."', 'Admin', 'User', datetime('now'), 1, 'Admin'),
-                ('c@c.c', '".password_hash('P@$$w0rd', PASSWORD_BCRYPT)."', 'Contributor', 'User', datetime('now'), 1, 'Contributor');
+            
     ";
     $db->exec($SQL_insert_posts);
-}
-
-// Insert sample articles if the table is empty
-$SQL_check_articles_empty = "SELECT COUNT(*) as count FROM Articles";
-$result = $db->querySingle($SQL_check_articles_empty, true);
-
-if ($result['count'] == 0) {
-    $SQL_insert_articles = "
-        INSERT INTO Articles (Title, Body, StartDate, EndDate, ContributorUsername)
-        VALUES 
-            ('Getting Started with Blogging', 
-            '<h2>Welcome to Blogging!</h2><p>This is your first article.</p>', 
-            date('now'), 
-            date('now', '+1 year'), 
-            'alice@test.com'),
-            
-            ('My Daily Routine', 
-            '<h2>Daily Schedule</h2><p>Here is how I organize my day.</p>', 
-            date('now'), 
-            date('now', '+1 year'), 
-            'bob@test.com');";
-    $db->exec($SQL_insert_articles);
 }
 } else {
     echo "<p class='alert alert-danger'>Error creating database.</p>";
