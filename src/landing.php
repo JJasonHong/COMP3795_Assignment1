@@ -98,7 +98,8 @@
                             <div class="blogShort">
                                 <h1><?php echo htmlspecialchars($row['title']); ?></h1>
                                 <!-- Placeholder image; replace with your own image source if available -->
-                                <img src="http://via.placeholder.com/150" alt="post img" class="pull-left img-responsive thumb margin10 img-thumbnail">
+                                <img src="/images/stock-post-img.jpeg" alt="post img" class="pull-left img-responsive thumb margin10 img-thumbnail">
+                                <br>
                                 <article>
                                     <p>
                                         <?php
