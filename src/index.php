@@ -58,15 +58,18 @@
                 // Query to fetch all posts along with the author's username.
                 $SQLstring = "
                     SELECT 
-                        p.id, 
-                        p.title, 
-                        p.slug, 
-                        p.content, 
-                        p.created_at, 
-                        u.username AS author
-                    FROM Posts p
-                    JOIN Users u ON p.user_id = u.id
-                    ORDER BY p.created_at DESC
+                        a.ArticleId, 
+                        a.Title, 
+                        a.Body, 
+                        a.CreateDate, 
+                        a.StartDate,
+                        a.EndDate,
+                        a.ContributorUsername,
+                        u.firstName || ' ' || u.lastName as authorName
+                    FROM Articles a
+                    LEFT JOIN Users u ON a.ContributorUsername = u.username
+                    WHERE date('now') BETWEEN a.StartDate AND a.EndDate
+                    ORDER BY a.CreateDate DESC
                 ";
                 $QueryResult = $db->query($SQLstring);
 
@@ -74,19 +77,33 @@
                     while ($row = $QueryResult->fetchArray(SQLITE3_ASSOC)) {
                         ?>
                         <div class="blogShort">
-                            <h1><?php echo htmlspecialchars($row['title']); ?></h1>
+                            <h1><?php echo htmlspecialchars($row['Title']); ?></h1>
                             <!-- Placeholder image; replace with your own image source if available -->
                             <img src="http://via.placeholder.com/150" alt="post img" class="pull-left img-responsive thumb margin10 img-thumbnail">
                             <article>
                                 <p>
                                     <?php 
                                     // Display a snippet (first 150 characters) of the content
-                                    $snippet = substr($row['content'], 0, 150);
-                                    echo htmlspecialchars($snippet) . (strlen($row['content']) > 150 ? "..." : "");
+                                    $snippet = substr($row['Body'], 0, 150);
+                                    echo htmlspecialchars($snippet) . (strlen($row['Body']) > 150 ? "..." : "");
                                     ?>
                                 </p>
+                                <p class="text-muted">
+                                    <small>Posted by: <?php echo htmlspecialchars($row['authorName']); ?></small>
+                                </p>
                             </article>
-                            <a class="btn btn-blog pull-right marginBottom10" href="/crud/display/display.php?id=<?php echo urlencode($row['id']); ?>">READ MORE</a>
+                            <div class="pull-right">
+                                <a class="btn btn-blog marginBottom10" href="/crud/display/display.php?id=<?php echo urlencode($row['ArticleId']); ?>">READ MORE</a>
+                                
+                                <?php if (isset($_SESSION['user_id']) && 
+                                         (strtolower($_SESSION['role']) === 'admin' || 
+                                          $_SESSION['user_id'] === $row['ContributorUsername'])): ?>
+                                    <a href="/crud/update/update.php?id=<?php echo urlencode($row['ArticleId']); ?>" 
+                                       class="btn btn-warning marginBottom10">Edit</a>
+                                    <a href="/crud/delete/delete.php?id=<?php echo urlencode($row['ArticleId']); ?>" 
+                                       class="btn btn-danger marginBottom10">Delete</a>
+                                <?php endif; ?>
+                            </div>
                         </div>
                         <?php
                     }
