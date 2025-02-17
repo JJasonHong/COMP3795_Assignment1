@@ -1,80 +1,144 @@
-<?php session_start(); ?>
+<!-- Style sheets -->
+<!-- Require/Include: Should we put db params and seed into the header file? -->
 <?php include("./inc_header.php"); ?>
-<?php include("./inc_db_params.php"); ?>
-<?php include("./seed.php"); ?>
+<?php include("./inc_db_params.php"); ?> 
+<?php include("./seed.php") ?>
+<!-- font -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&display=swap" rel="stylesheet">
 
-<?php 
-if (isset($_SESSION['username'])) {
-    header("Location: ../index.php");
-    exit();
-}
-?>
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="landing-css.css" rel="stylesheet">
 
-<?php
-if (isset($_SESSION['error'])) {
-    echo '<div class="alert alert-danger">' . $_SESSION['error'] . '</div>';
-    unset($_SESSION['error']);
-}
-?>
+<!-- Navbar START -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
 
-<!-- Inline CSS for a warm background, full viewport height, and fixed footer -->
-<style>
-  html, body {
-    height: 100vh;
-    overflow: hidden;
-    margin: 0;
-  }
-  body {
-    background-color: #fff4e6; /* Warm, creamy background color */
-  }
-  /* Fixed footer styling */
-  .fixed-footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background-color: #f8f9fa; /* Light gray background (adjust as needed) */
-    text-align: center;
-    padding: 1rem 0;
-  }
-</style>
+        <!-- Left Section (Row with Two Columns) -->
+        <div class="col text-center"> 
+            <a class="navbar-brand" href="#" id="navbar-home">Home</a>
+        </div>
 
-<!-- Main content container filling the viewport -->
-<div class="container d-flex align-items-center justify-content-center vh-100">
-  <div class="row align-items-center g-lg-5 py-5">
-    <div class="col-lg-7 text-center text-lg-start">
-      <h1 class="display-4 fw-bold lh-1 text-body-emphasis mb-3">
-        COMP3975 Assignment 1
-      </h1>
-      <p class="col-lg-10 fs-4">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro libero rem corrupti natus reiciendis obcaecati? Voluptatibus deserunt magni at asperiores, laborum ullam ut tempora facere aliquid deleniti ad nulla in!
-      </p>
+        <div class="row w-100">
+            <div class="col d-flex align-items-center">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Latest</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./crud/create/create.php">Post</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- Left Section END -->
+
+
+            <!-- Right Section (Row with Three Columns) -->
+            <div class="col d-flex justify-content-end">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/register/register.php">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login/login.php">Login</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Account
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" href="#">Admin Stuff?</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <!-- Right Section END -->
+        </div>
     </div>
-    <div class="col-md-10 mx-auto col-lg-5">
-      <form class="p-4 p-md-5 border rounded-3 bg-body-tertiary">
-        <div class="form-floating mb-3">
-          <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-          <label for="floatingInput">Email address</label>
-        </div>
-        <div class="form-floating mb-3">
-          <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
-          <label for="floatingPassword">Password</label>
-        </div>
-        <div class="checkbox mb-3">
-          <!-- Additional checkbox content can be added here if needed -->
-        </div>
-        <button class="w-100 btn btn-lg btn-primary" type="button" onclick="window.location.href='/register/register.php'">
-          Sign up
-        </button>
-        <hr class="my-4">
-        <small class="text-body-secondary">
-          By clicking Sign up, you agree to the terms of use.
-        </small>
-      </form>
-    </div>
-  </div>
+</nav>
+<!-- Navbar END -->
+
+
+<!-- Container Start -->
+<div class="container" id="mainContainer">
+    <!-- Section Start -->
+    <section class="header-nav-wrap content has-banner has-avatar avatar-style-circle has-title has-description has-nav">
+        <!-- HEADER Start -->
+        <header id="header" class="blog-header" role="banner">
+            <figure id="header-banner" class="header-image-wrapper header-module">
+                <a href="/" class="header-image cover loaded imgLiquid_bgSize imgLiquid_ready">
+                    <!-- Banner IMG -->
+                    <img src="/images/banner-sand.webp" alt="banner">
+                </a>
+            </figure>
+            <!-- Logo START -->
+            <!-- <a href="#" id="header-avatar" class="blogger-avatar header-module ease">
+                <img src="/images/logo.png" class="img-responsive" alt="avatar">
+            </a> -->
+            <!-- Logo END -->
+
+            <!-- Blog Posts -->
+            <div>
+                <?php
+                if ($db !== FALSE) {
+                    // Query to fetch all posts along with the author's username.
+                    $SQLstring = "
+                    SELECT 
+                        p.id, 
+                        p.title, 
+                        p.slug, 
+                        p.content, 
+                        p.created_at, 
+                        u.username AS author
+                    FROM Posts p
+                    JOIN Users u ON p.user_id = u.id
+                    ORDER BY p.created_at DESC
+                ";
+                    $QueryResult = $db->query($SQLstring);
+
+                    if ($QueryResult) {
+                        while ($row = $QueryResult->fetchArray(SQLITE3_ASSOC)) {
+                ?>
+                            <div class="blogShort">
+                                <h1><?php echo htmlspecialchars($row['title']); ?></h1>
+                                <!-- Placeholder image; replace with your own image source if available -->
+                                <!-- <img src="/images/stock-post-img.jpeg" alt="post img" class="pull-left img-responsive thumb margin10 img-thumbnail"> -->
+                                <br>
+                                <article>
+                                    <p>
+                                        <?php
+                                        // Display a snippet (first 150 characters) of the content
+                                        $snippet = substr($row['content'], 0, 150);
+                                        echo htmlspecialchars($snippet) . (strlen($row['content']) > 150 ? "..." : "");
+                                        ?>
+                                    </p>
+                                </article>
+                                <a class="btn btn-blog pull-right marginBottom10" href="/crud/display/display.php?id=<?php echo urlencode($row['id']); ?>">READ MORE</a>
+                            </div>
+                <?php
+                        }
+                        echo '<div class="col-md-12 gap10"></div>';
+                    } else {
+                        echo "<p class='alert alert-danger'>Error: Unable to fetch post data.</p>";
+                    }
+                    // Close the database connection.
+                    $db->close();
+                }
+                ?>
+            </div>
+
+            <!-- Welcome Message START -->
+            <?php if (isset($_SESSION['username'])): ?>
+                <p class="alert alert-success">Welcome, <strong>
+                        <?php echo htmlspecialchars($_SESSION['username']); ?></strong>!</p>
+                <p><a href="logout/logout.php" class="btn btn-danger">Logout</a></p>
+            <?php else: ?>
+            <?php endif; ?>
+            <!-- Welcome Message END -->
+        </header>
+        <!-- HEADER End -->
+    </section>
+    <!-- Section END -->
 </div>
-
-<!-- Fixed footer -->
-<footer class="fixed-footer">
-  <?php include("./inc_footer.php"); ?>
-</footer>
+<!-- Container End -->
