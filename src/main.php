@@ -13,7 +13,7 @@
 <!-- Welcome Message START -->
 <?php if (isset($_SESSION['username'])): ?>
     <h1 class="pt-2 text-center">
-        Welcome, <strong><?php echo htmlspecialchars(($_SESSION['firstName'] ?? '') . ' ' . ($_SESSION['lastName'] ?? 'Guest')); ?></strong>!
+        Welcome, <strong><?php echo htmlspecialchars(($_SESSION['firstName'] ?? '') . ' ' . ($_SESSION['lastName'] ?? '')); ?></strong>!
 
     </h1>
 <?php else: ?>

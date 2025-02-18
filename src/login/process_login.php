@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         // Fetch user by email - now including role and isApproved
-        $stmt = $db->prepare("SELECT id, password, role, isApproved, firstName FROM Users WHERE username = ?");
+        $stmt = $db->prepare("SELECT id, password, role, isApproved, firstName, lastName FROM Users WHERE username = ?");
         $stmt->execute([$email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -23,7 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $_SESSION['user_id']   = $user['id'];
                 $_SESSION['username']  = $email;
                 $_SESSION['role']      = $user['role'];
-                $_SESSION['firstName'] = $user['firstName']; // Store the firstName in session
+                $_SESSION['firstName'] = $user['firstName'];
+                $_SESSION['lastName'] = $user['lastName']; // Store the firstName in session
                 header("Location: ../main.php");
                 exit();
             } else {
