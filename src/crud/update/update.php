@@ -1,32 +1,34 @@
-<?php include("../../inc_header.php"); ?>
-<?php include("../../inc_db_params.php"); ?>
-
 <?php
-// Initialize variables for the blog post
-$postId  = $title = $slug = $content = "";
+session_start();
+include("../../inc_header.php");
+include("../../inc_db_params.php");
+
+// Initialize variables for the article
+$articleId = $title = $body = $startDate = $endDate = "";
 
 // Check if 'id' is provided in the URL
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
 
-    // Prepare an SQL statement to fetch the blog post data
-    $stmt = $db->prepare("SELECT * FROM Posts WHERE id = :id");
+    // Prepare an SQL statement to fetch the article data
+    $stmt = $db->prepare("SELECT * FROM Articles WHERE ArticleId = :ArticleId");
 
     if ($stmt) {
-        // Bind the post ID parameter as an integer
-        $stmt->bindValue(':id', $id, SQLITE3_INTEGER);
+        // Bind the article ID parameter as an integer
+        $stmt->bindValue(':ArticleId', $id, SQLITE3_INTEGER);
 
         // Execute the query
         $result = $stmt->execute();
 
-        // Fetch the post data
+        // Fetch the article data
         if ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-            $postId  = $row['id'];
-            $title   = $row['title'];
-            $slug    = $row['slug'];
-            $content = $row['content'];
+            $articleId = $row['ArticleId'];
+            $title     = $row['Title'];
+            $body      = $row['Body'];
+            $startDate = $row['StartDate'];
+            $endDate   = $row['EndDate'];
         } else {
-            echo "<p class='alert alert-danger'>Blog post not found.</p>";
+            echo "<p class='alert alert-danger'>Article not found.</p>";
         }
 
         // Finalize the result set
@@ -37,43 +39,75 @@ if (isset($_GET['id'])) {
 }
 ?>
 
-<h1>Update Blog Post</h1>
+<!-- Main Container with landing-css styling -->
+<div class="container" id="mainContainer">
+  <h1 class="text-center mt-5">Update Article</h1>
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <form action="process_update.php" method="post" class="mt-4">
+        <!-- Hidden field to carry the article ID -->
+        <input type="hidden" name="ArticleId" value="<?php echo htmlspecialchars($articleId); ?>" />
 
-<div class="row">
-    <div class="col-md-6">
-        <form action="process_update.php" method="post">
-            <!-- Hidden field to carry the post ID -->
-            <input type="hidden" name="id" value="<?php echo htmlspecialchars($postId); ?>" />
+        <div class="mb-3">
+          <label class="form-label">Article ID</label>
+          <p><?php echo htmlspecialchars($articleId); ?></p>
+        </div>
 
-            <div class="form-group">
-                <label class="control-label">Post ID</label>
-                <p><?php echo htmlspecialchars($postId); ?></p>
-            </div>
+        <div class="mb-3">
+          <label for="Title" class="form-label">Title</label>
+          <input
+            type="text"
+            class="form-control"
+            name="Title"
+            id="Title"
+            value="<?php echo htmlspecialchars($title); ?>"
+            required
+          />
+        </div>
 
-            <div class="form-group">
-                <label for="Title" class="control-label">Title</label>
-                <input type="text" class="form-control" name="Title" id="Title" value="<?php echo htmlspecialchars($title); ?>" required />
-            </div>
+        <div class="mb-3">
+          <label for="Body" class="form-label">Body</label>
+          <textarea
+            class="form-control"
+            name="Body"
+            id="Body"
+            rows="8"
+            required
+          ><?php echo htmlspecialchars($body); ?></textarea>
+        </div>
 
-            <div class="form-group">
-                <label for="Slug" class="control-label">Slug</label>
-                <input type="text" class="form-control" name="Slug" id="Slug" value="<?php echo htmlspecialchars($slug); ?>" required />
-            </div>
+        <!-- Optional: If you want to allow updating StartDate/EndDate -->
+        <div class="mb-3">
+          <label for="StartDate" class="form-label">Start Date</label>
+          <input
+            type="date"
+            class="form-control"
+            name="StartDate"
+            id="StartDate"
+            value="<?php echo htmlspecialchars($startDate); ?>"
+          />
+        </div>
 
-            <div class="form-group">
-                <label for="Content" class="control-label">Content</label>
-                <textarea class="form-control" name="Content" id="Content" rows="8" required><?php echo htmlspecialchars($content); ?></textarea>
-            </div>
+        <div class="mb-3">
+          <label for="EndDate" class="form-label">End Date</label>
+          <input
+            type="date"
+            class="form-control"
+            name="EndDate"
+            id="EndDate"
+            value="<?php echo htmlspecialchars($endDate); ?>"
+          />
+        </div>
+        <!-- End optional fields -->
 
-            <div class="form-group">
-                <a href="../../main.php" class="btn btn-small btn-primary">&lt;&lt; BACK</a>
-                &nbsp;&nbsp;&nbsp;
-                <input type="submit" value="Update" name="update" class="btn btn-warning" />
-            </div>
-        </form>
+        <!-- Action Buttons -->
+        <div class="mt-4 d-flex">
+          <a href="../../main.php" class="btn btn-primary me-3">&lt;&lt; BACK</a>
+          <input type="submit" value="Update" name="update" class="btn btn-warning" />
+        </div>
+      </form>
     </div>
+  </div>
 </div>
-
-<br />
 
 <?php include("../../inc_footer.php"); ?>
