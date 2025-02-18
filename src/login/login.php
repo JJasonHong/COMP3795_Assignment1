@@ -3,7 +3,7 @@
 <!-- Require/Include -->
 <?php require_once "../inc_db_params.php"; ?>
 <?php require_once "../utils.php"; ?>
-<?php require_once "../inc_header.php"; ?>
+<?php require_once "../inc_header_before_login.php"; ?>
 
 <?php 
 // Check if User is already logged in

@@ -28,7 +28,7 @@
         <div class="container">
             <!-- Left Section (Row with Two Columns) -->
             <div class="col text-center">
-                <a class="navbar-brand" href="/index.php" id="navbar-home">Home</a>
+                <a class="navbar-brand" href="/main.php" id="navbar-home">Home</a>
             </div>
 
             <div class="row w-100">
@@ -50,10 +50,7 @@
                 <div class="col d-flex justify-content-end">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="/register/register.php">Register</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/login/login.php">Login</a>
+                            <a class="nav-link" href="/logout/logout.php">Logout</a>
                         </li>
                       
                     </ul>

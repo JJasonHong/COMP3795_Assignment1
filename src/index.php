@@ -1,9 +1,13 @@
-<?php 
-session_start(); 
-include("./inc_header.php");
-include("./inc_db_params.php"); 
-include("./seed.php");
-?>
+<!-- Style sheets -->
+<!-- Require/Include: Should we put db params and seed into the header file? -->
+<?php if (isset($_SESSION['username'])): ?>
+    <?php include("./inc_header.php"); ?>
+<?php else: ?>
+    <?php include("./inc_header_before_login.php"); ?>
+<?php endif; ?>
+<?php include("./inc_db_params.php"); ?> 
+<?php include("./seed.php") ?>
+
 
 <!-- Container Start -->
 <div class="container" id="mainContainer">
