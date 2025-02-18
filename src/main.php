@@ -1,18 +1,25 @@
 <?php session_start(); ?>
 
 <!-- Require/Include -->
-<?php include("./inc_header.php"); ?>
+<?php if (isset($_SESSION['username'])): ?>
+    <?php include("./inc_header.php"); ?>
+<?php else: ?>
+    <?php include("./inc_header_before_login.php"); ?>
+<?php endif; ?>
+
 <?php include("./inc_db_params.php"); ?>
 <?php include("./seed.php") ?>
 
 <!-- Welcome Message START -->
 <?php if (isset($_SESSION['username'])): ?>
     <h1 class="pt-2 text-center">
-        Welcome, <strong><?php echo htmlspecialchars($_SESSION['firstName'] ?? 'Guest'); ?></strong>! Recent Posts
+        Welcome, <strong><?php echo htmlspecialchars(($_SESSION['firstName'] ?? '') . ' ' . ($_SESSION['lastName'] ?? 'Guest')); ?></strong>!
+
     </h1>
     <!-- <p><a href="logout/logout.php" class="btn btn-danger">Logout</a></p> -->
 <?php else: ?>
-    <p class="alert alert-info">You are not logged in.</p>
+    <p class="alert alert-info">Oops! You are not logged in. Please <a href="login/login.php" class="alert-link">Login</a>, or <a href="register/register.php" class="alert-link">Register</a>
+        an account to proceed!</p>
 <?php endif; ?>
 <!-- Welcome Message END -->
 
@@ -41,11 +48,10 @@
                         <li class="pe-5">
                             <a href="./crud/create/create.php" class="btn btn-small btn-success">Create New Post</a>
                         </li>
-                        <li class="ps-4"><a href="logout/logout.php" class="btn btn-danger">Logout</a></li>
                     <?php else: ?>
                         <!-- Show these items when not logged in -->
-                        <li><a href="login/login.php">Login</a></li>
-                        <li><a href="register/register.php">Register</a></li>
+                        <!-- <li><a href="login/login.php">Login</a></li>
+                        <li><a href="register/register.php">Register</a></li> -->
                     <?php endif; ?>
                     <li class="nav-divider"></li>
                 </ul>
