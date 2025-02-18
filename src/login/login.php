@@ -3,11 +3,7 @@
 <!-- Require/Include -->
 <?php require_once "../inc_db_params.php"; ?>
 <?php require_once "../utils.php"; ?>
-<?php if (isset($_SESSION['username'])): ?>
-    <?php include("./inc_header.php"); ?>
-<?php else: ?>
-    <?php include("./inc_header_before_login.php"); ?>
-<?php endif; ?>
+<?php require_once "../inc_header_before_login.php"; ?>
 
 <?php 
 // Check if User is already logged in

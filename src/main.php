@@ -19,7 +19,7 @@
     <!-- <p><a href="logout/logout.php" class="btn btn-danger">Logout</a></p> -->
 <?php else: ?>
     <p class="alert alert-info">Oops! You are not logged in. Please <a href="login/login.php" class="alert-link">Login</a>, or <a href="register/register.php" class="alert-link">Register</a>
-        an account to proceed!</p>
+        an account to gain access to our forums!</p>
 <?php endif; ?>
 <!-- Welcome Message END -->
 
