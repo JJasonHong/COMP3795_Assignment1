@@ -55,14 +55,7 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/login/login.php">Login</a>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Account
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <a class="dropdown-item" href="#">Admin Stuff?</a>
-                            </div>
-                        </li>
+                      
                     </ul>
                 </div>
                 <!-- Right Section END -->

@@ -4,16 +4,23 @@ include("../../inc_header.php");
 include("../../inc_db_params.php");
 
 // Initialize variables
-$articleId = $title = $body = $createDate = $startDate = $endDate = $contributorUsername = $authorName = "";
+$articleId = $title = $body = $createDate = $authorName = "";
+$loggedInUser = $_SESSION['username'] ?? null;
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
 
-    // Prepare an SQL statement to fetch the article data with author name
+    // Prepare an SQL statement to fetch the article data with the author's name.
     $stmt = $db->prepare("
         SELECT 
-            a.*,
-            u.firstName || ' ' || u.lastName as authorName
+            a.ArticleId,
+            a.Title,
+            a.Body,
+            a.CreatDate AS CreateDate,
+            a.StartDate,
+            a.EndDate,
+            a.ContributorUsername,
+            u.firstName || ' ' || u.lastName AS authorName
         FROM Articles a
         LEFT JOIN Users u ON a.ContributorUsername = u.username
         WHERE a.ArticleId = :id
@@ -24,14 +31,14 @@ if (isset($_GET['id'])) {
         $result = $stmt->execute();
 
         if ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-            $articleId = $row['ArticleId'];
-            $title = $row['Title'];
-            $body = $row['Body'];
-            $createDate = $row['CreateDate'];
-            $startDate = $row['StartDate'];
-            $endDate = $row['EndDate'];
+            $articleId         = $row['ArticleId'];
+            $title             = $row['Title'];
+            $body              = $row['Body'];
+            $createDate        = $row['CreateDate'];
+            $startDate         = $row['StartDate'];
+            $endDate           = $row['EndDate'];
             $contributorUsername = $row['ContributorUsername'];
-            $authorName = $row['authorName'];
+            $authorName        = $row['authorName'];
         } else {
             echo "<p class='alert alert-danger'>Article not found.</p>";
         }
@@ -54,24 +61,22 @@ if (isset($_GET['id'])) {
 
             <!-- Article Content -->
             <article class="mt-4">
-
                 <p class="text-muted mt-3">
-                <p class="fs-4">
-                    Posted by: <?php echo htmlspecialchars($authorName); ?><br>
-                    Created on: <?php echo htmlspecialchars($createDate); ?><br>
-                    Valid from: <?php echo htmlspecialchars($startDate); ?> to <?php echo htmlspecialchars($endDate); ?>
+                    <span class="fs-4">Posted by: <?php echo htmlspecialchars($authorName); ?></span><br>
+                    <span class="fs-5">Created on: <?php echo htmlspecialchars($createDate); ?></span><br>
+                    <span class="fs-5">Valid from: <?php echo htmlspecialchars($startDate); ?> to <?php echo htmlspecialchars($endDate); ?></span>
                 </p>
                 <br>
-                <br>
-                <div class="fs-1">
-                    <?php echo $body; // Render HTML content 
-                    ?>
+                <!-- Render the article body (allowing HTML) -->
+                <div class="fs-2">
+                    <?php echo nl2br($body); ?>
                 </div>
-                </p>
             </article>
 
             <!-- Edit/Delete Buttons (if permitted) -->
-            <?php if (isset($_SESSION['username']) && (strtolower($_SESSION['role']) === 'admin' || $_SESSION['username'] === $contributorUsername)): ?>
+            <?php
+            // Only allow Edit/Delete if the user is an admin or the article contributor
+            if ($loggedInUser && (strtolower($_SESSION['role']) === 'admin' || $loggedInUser === $contributorUsername)): ?>
                 <div class="mt-4 text-right">
                     <a href="/crud/update/update.php?id=<?php echo urlencode($articleId); ?>" class="btn btn-warning">Edit</a>
                     <a href="/crud/delete/delete.php?id=<?php echo urlencode($articleId); ?>" class="btn btn-danger">Delete</a>

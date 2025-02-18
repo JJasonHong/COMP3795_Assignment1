@@ -3,19 +3,17 @@
 <!-- Require/Include -->
 <?php include("./inc_header.php"); ?>
 <?php include("./inc_db_params.php"); ?>
-<?php include("./seed.php") ?>
+<?php include("./seed.php"); ?>
 
 <!-- Welcome Message START -->
 <?php if (isset($_SESSION['username'])): ?>
     <h1 class="pt-2 text-center">
         Welcome, <strong><?php echo htmlspecialchars($_SESSION['firstName'] ?? 'Guest'); ?></strong>! Recent Posts
     </h1>
-    <!-- <p><a href="logout/logout.php" class="btn btn-danger">Logout</a></p> -->
 <?php else: ?>
-    <p class="alert alert-info">You are not logged in.</p>
+    <p class="alert alert-info text-center">You are not logged in.</p>
 <?php endif; ?>
 <!-- Welcome Message END -->
-
 
 <!-- Blog Layout Container -->
 <div class="container">
@@ -26,17 +24,28 @@
                 <ul class="nav">
                     <?php if (isset($_SESSION['username'])): ?>
                         <!-- Show these items only when logged in -->
-                        <?php if (isset($_SESSION['role']) && (strtolower($_SESSION['role']) === 'contributor' || strtolower($_SESSION['role']) === 'admin')): ?>
-                            <li class="pb-3">
-                                <a href="admin/manage_users.php" class="btn btn-warning">
-                                    <i class="glyphicon glyphicon-cog"></i> Admin Panel
-                                </a>
-                            </li>
-                            <li class="pb-3 ps-3">
-                                <a href="contributor/contributor_article.php" class="btn btn-warning">
-                                    <i class="glyphicon glyphicon-file"></i> My Articles
-                                </a>
-                            </li>
+                        <?php if (isset($_SESSION['role'])): ?>
+                            <?php if (strtolower($_SESSION['role']) === 'admin'): ?>
+                                <!-- Admin Panel -->
+                                <li class="pb-3">
+                                    <a href="admin/manage_users.php" class="btn btn-warning">
+                                        <i class="glyphicon glyphicon-cog"></i> Admin Panel
+                                    </a>
+                                </li>
+                                <!-- My Articles -->
+                                <li class="pb-3 ps-3">
+                                    <a href="contributor/contributor_article.php" class="btn btn-warning">
+                                        <i class="glyphicon glyphicon-file"></i> My Articles
+                                    </a>
+                                </li>
+                            <?php elseif (strtolower($_SESSION['role']) === 'contributor'): ?>
+                                <!-- My Articles Only (No Admin Panel) -->
+                                <li class="pb-3 ps-0">
+                                    <a href="contributor/contributor_article.php" class="btn btn-warning">
+                                        <i class="glyphicon glyphicon-file"></i> My Articles
+                                    </a>
+                                </li>
+                            <?php endif; ?>
                         <?php endif; ?>
                         <li class="pe-5">
                             <a href="./crud/create/create.php" class="btn btn-small btn-success">Create New Post</a>
@@ -66,24 +75,22 @@
 
         <!-- Blog Posts -->
         <div class="col-sm-9">
-
             <?php
             if ($db !== FALSE) {
-                // Query to fetch all posts along with the author's username.
+                // Query to fetch all articles along with the author's name.
                 $SQLstring = "
                     SELECT 
                         a.ArticleId, 
                         a.Title, 
                         a.Body, 
-                        a.CreateDate, 
-                        a.StartDate,
+                        a.CreatDate AS CreateDate, 
+                        a.StartDate, 
                         a.EndDate,
                         a.ContributorUsername,
-                        u.firstName || ' ' || u.lastName as authorName
+                        u.firstName || ' ' || u.lastName AS authorName
                     FROM Articles a
                     LEFT JOIN Users u ON a.ContributorUsername = u.username
-                    WHERE date('now') BETWEEN a.StartDate AND a.EndDate
-                    ORDER BY a.CreateDate DESC
+                    ORDER BY a.CreatDate DESC
                 ";
                 $QueryResult = $db->query($SQLstring);
 
@@ -107,10 +114,13 @@
                             <div class="pull-right">
                                 <a class="btn btn-blog marginBottom10" href="/crud/display/display.php?id=<?php echo urlencode($row['ArticleId']); ?>">READ MORE</a>
 
-                                <?php if (
-                                    isset($_SESSION['user_id']) &&
+                                <?php
+                                // Check if the logged-in user is allowed to edit/delete the post.
+                                // Since Articles store ContributorUsername as the email, we compare with $_SESSION['username'].
+                                if (
+                                    isset($_SESSION['username']) &&
                                     (strtolower($_SESSION['role']) === 'admin' ||
-                                        $_SESSION['user_id'] === $row['ContributorUsername'])
+                                        $_SESSION['username'] === $row['ContributorUsername'])
                                 ): ?>
                                     <a href="/crud/update/update.php?id=<?php echo urlencode($row['ArticleId']); ?>"
                                         class="btn btn-warning marginBottom10">Edit</a>
@@ -123,7 +133,7 @@
                     }
                     echo '<div class="col-md-12 gap10"></div>';
                 } else {
-                    echo "<p class='alert alert-danger'>Error: Unable to fetch post data.</p>";
+                    echo "<p class='alert alert-danger'>Error: Unable to fetch article data.</p>";
                 }
                 // Close the database connection.
                 $db->close();
@@ -138,87 +148,3 @@
 </div>
 
 <?php include("./inc_footer.php"); ?>
-
-<!-- Inline CSS for styling the blog layout -->
-<!-- <style>
-    .blogShort {
-        border-bottom: 1px solid #ddd;
-        padding-bottom: 20px;
-        margin-bottom: 20px;
-    }
-
-    .add {
-        background: #333;
-        padding: 10%;
-        height: 300px;
-        color: #fff;
-        text-align: center;
-    }
-
-    .nav-sidebar {
-        width: 100%;
-        padding: 8px 0;
-        border-right: 1px solid #ddd;
-    }
-
-    .nav-sidebar a {
-        color: #333;
-        -webkit-transition: all 0.08s linear;
-        -moz-transition: all 0.08s linear;
-        -o-transition: all 0.08s linear;
-        transition: all 0.08s linear;
-    }
-
-    .nav-sidebar .active a {
-        cursor: default;
-        background-color: #34ca78;
-        color: #fff;
-    }
-
-    .nav-sidebar .active a:hover {
-        background-color: #37D980;
-    }
-
-    .nav-sidebar .text-overflow a,
-    .nav-sidebar .text-overflow .media-body {
-        white-space: nowrap;
-        overflow: hidden;
-        -o-text-overflow: ellipsis;
-        text-overflow: ellipsis;
-    }
-
-    .btn-blog {
-        color: #ffffff;
-        background-color: #37d980;
-        border-color: #37d980;
-        border-radius: 0;
-        margin-bottom: 10px;
-    }
-
-    .btn-blog:hover,
-    .btn-blog:focus,
-    .btn-blog:active,
-    .btn-blog.active,
-    .open .dropdown-toggle.btn-blog {
-        color: white;
-        background-color: #34ca78;
-        border-color: #34ca78;
-    }
-
-    h2 {
-        color: #34ca78;
-    }
-
-    .margin10 {
-        margin-bottom: 10px;
-        margin-right: 10px;
-    }
-
-    body {
-        background-color: #d9b99b;
-    }
-
-    #blog {
-        background-color: #faf0e6;
-    }
-</style> -->

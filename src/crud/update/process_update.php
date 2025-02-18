@@ -1,51 +1,83 @@
 <?php
+session_start();
+include("../../inc_db_params.php");
+include("../../utils.php"); // Optional: for sanitize_input()
+
+// Redirect if user is not logged in
+if (!isset($_SESSION['username'])) {
+    header("Location: ../../login/login.php");
+    exit();
+}
+
+// Extract and sanitize form data
 if (isset($_POST['update'])) {
-    include("../../inc_db_params.php");
-    include("../../utils.php"); // Optional: for sanitize_input()
+    // Retrieve form values (adjust based on your actual form fields)
+    $articleId  = sanitize_input($_POST['ArticleId']);
+    $title      = sanitize_input($_POST['Title']);
+    $body       = sanitize_input($_POST['Body']);
+    $startDate  = sanitize_input($_POST['StartDate']);
+    $endDate    = sanitize_input($_POST['EndDate']);
 
-    // Extract and sanitize form data
-    $postId  = sanitize_input($_POST['id']);
-    $title   = sanitize_input($_POST['Title']);
-    $slug    = sanitize_input($_POST['Slug']);
-    $content = sanitize_input($_POST['Content']);
+    // Retrieve logged-in user details
+    $username = $_SESSION['username'];
+    $userRole = strtolower($_SESSION['role'] ?? ''); // Default to empty if undefined
 
-    // Prepare the SQL statement for updating the blog post.
-    // We update the title, slug, and content, and set updated_at to the current timestamp.
-    $sql = "UPDATE Posts 
-            SET title = :Title, 
-                slug = :Slug, 
-                content = :Content, 
-                updated_at = CURRENT_TIMESTAMP 
-            WHERE id = :id";
+    // Fetch the article's contributor email
+    $stmt = $db->prepare("SELECT ContributorUsername FROM Articles WHERE ArticleId = :ArticleId");
+    $stmt->bindValue(':ArticleId', $articleId, SQLITE3_INTEGER);
+    $result = $stmt->execute();
+    $article = $result->fetchArray(SQLITE3_ASSOC);
 
-    // Create a prepared statement
-    $stmt = $db->prepare($sql);
+    if (!$article) {
+        echo "<p class='alert alert-danger'>Error: Article not found.</p>";
+        exit();
+    }
 
-    if ($stmt) {
+    $articleOwner = $article['ContributorUsername'];
+
+    // Check if the user is authorized to update the article
+    if ($userRole !== 'admin' && $username !== $articleOwner) {
+        echo "<p class='alert alert-danger'>Error: You do not have permission to edit this article.</p>";
+        exit();
+    }
+
+    // Prepare the SQL statement for updating the article
+    // Adjust columns based on your actual schema
+    $sql = "UPDATE Articles
+            SET Title = :Title,
+                Body  = :Body,
+                StartDate = :StartDate,
+                EndDate   = :EndDate
+            WHERE ArticleId = :ArticleId";
+
+    $stmtUpdate = $db->prepare($sql);
+
+    if ($stmtUpdate) {
         // Bind values securely
-        $stmt->bindValue(':Title', $title, SQLITE3_TEXT);
-        $stmt->bindValue(':Slug', $slug, SQLITE3_TEXT);
-        $stmt->bindValue(':Content', $content, SQLITE3_TEXT);
-        $stmt->bindValue(':id', $postId, SQLITE3_INTEGER);
+        $stmtUpdate->bindValue(':Title', $title, SQLITE3_TEXT);
+        $stmtUpdate->bindValue(':Body', $body, SQLITE3_TEXT);
+        $stmtUpdate->bindValue(':StartDate', $startDate, SQLITE3_TEXT);
+        $stmtUpdate->bindValue(':EndDate', $endDate, SQLITE3_TEXT);
+        $stmtUpdate->bindValue(':ArticleId', $articleId, SQLITE3_INTEGER);
 
         // Execute the statement
-        $exec = $stmt->execute();
+        $exec = $stmtUpdate->execute();
 
-        // Log error if execution fails
+        // Check execution result
         if (!$exec) {
             error_log('SQLite execute() failed: ' . $db->lastErrorMsg());
-        }
-
-        // Close database connection
-        $db->close();
-
-        // Redirect back to the blog list if update was successful
-        if ($exec) {
-            header('Location: ../../index.php');
-            exit;
+            echo "<p class='alert alert-danger'>Error updating article.</p>";
+        } else {
+            // Redirect back to the article's display page on success
+            header("Location: ../../crud/display/display.php?id=" . urlencode($articleId));
+            exit();
         }
     } else {
         error_log('SQLite prepare() failed: ' . $db->lastErrorMsg());
+        echo "<p class='alert alert-danger'>Error preparing statement.</p>";
     }
+
+    // Close the database connection
+    $db->close();
 }
 ?>

@@ -1,35 +1,65 @@
 <?php
-if (isset($_POST['id'])) {
-    include("../../inc_db_params.php"); // Include database connection
+session_start();
+include("../../inc_db_params.php"); // Include database connection
 
-    // Get the post ID from the POST request
-    $id = $_POST['id'];
-
-    // Prepare the DELETE SQL statement for the blog post
-    $stmt = $db->prepare("DELETE FROM Posts WHERE id = :id");
-
-    if ($stmt) {
-        // Bind the post ID parameter as an integer to prevent SQL injection
-        $stmt->bindValue(':id', $id, SQLITE3_INTEGER);
-
-        // Execute the query
-        $exec = $stmt->execute();
-
-        // Check if execute() was successful
-        if ($exec) {
-            header('Location: ../../index.php'); // Redirect back to the list
-            exit;
-        } else {
-            error_log('SQLite execute() failed: ' . $db->lastErrorMsg());
-        }
-    } else {
-        error_log('SQLite statement preparation failed: ' . $db->lastErrorMsg());
-    }
-
-    // Close the database connection
-    $db->close();
+// Check if user is logged in
+if (!isset($_SESSION['username'])) {
+    header("Location: ../../login/login.php");
+    exit();
 }
+
+// Check if article ID is provided
+if (!isset($_POST['id'])) {
+    echo "<p class='alert alert-danger'>Error: No article ID provided.</p>";
+    exit();
+}
+
+$articleId = $_POST['id'];
+
+// Get user role and username from session
+$username = $_SESSION['username'];
+$userRole = strtolower($_SESSION['role'] ?? ''); // Default to empty if undefined
+
+// Fetch the article owner
+$stmt = $db->prepare("SELECT ContributorUsername FROM Articles WHERE ArticleId = :id");
+$stmt->bindValue(':id', $articleId, SQLITE3_INTEGER);
+$result = $stmt->execute();
+$article = $result->fetchArray(SQLITE3_ASSOC);
+
+if (!$article) {
+    echo "<p class='alert alert-danger'>Error: Article not found.</p>";
+    exit();
+}
+
+$articleOwner = $article['ContributorUsername'];
+
+// Check if the user is authorized to delete the article
+if ($userRole !== 'admin' && $username !== $articleOwner) {
+    echo "<p class='alert alert-danger'>Error: You do not have permission to delete this article.</p>";
+    exit();
+}
+
+// Prepare the DELETE SQL statement
+$stmt = $db->prepare("DELETE FROM Articles WHERE ArticleId = :id");
+
+if ($stmt) {
+    $stmt->bindValue(':id', $articleId, SQLITE3_INTEGER);
+    $exec = $stmt->execute();
+
+    if ($exec) {
+        header("Location: ../../main.php?message=Article deleted successfully"); // Redirect back to main page
+        exit();
+    } else {
+        echo "<p class='alert alert-danger'>Error deleting article: " . $db->lastErrorMsg() . "</p>";
+    }
+} else {
+    echo "<p class='alert alert-danger'>Error preparing statement: " . $db->lastErrorMsg() . "</p>";
+}
+
+// Close the database connection
+$db->close();
 ?>
+
 <p>
-    <a href="../../index.php" class="btn btn-primary">&lt;&lt; Back to List</a>
+    <a href="../../main.php" class="btn btn-primary">&lt;&lt; Back to List</a>
 </p>

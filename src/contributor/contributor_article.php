@@ -9,12 +9,27 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-// Prepare a statement to fetch articles by the current contributor (using the username as key)
-$stmt = $db->prepare("SELECT ArticleId, Title, Body, CreateDate, StartDate, EndDate 
-                      FROM Articles 
-                      WHERE ContributorUsername = :username 
-                      ORDER BY CreateDate DESC");
-$stmt->bindValue(':username', $_SESSION['username'], SQLITE3_TEXT);
+// Fetch the user ID for the logged-in user
+$stmt_user = $db->prepare("SELECT id FROM Users WHERE username = :username");
+$stmt_user->bindValue(':username', $_SESSION['username'], SQLITE3_TEXT);
+$result_user = $stmt_user->execute();
+$user = $result_user->fetchArray(SQLITE3_ASSOC);
+
+if (!$user) {
+    echo "<p class='alert alert-danger'>User not found.</p>";
+    exit();
+}
+
+$user_id = $user['id'];
+
+// Prepare a statement to fetch posts by the current contributor
+$stmt = $db->prepare("
+    SELECT id AS PostId, title AS Title, content AS Body, created_at AS CreateDate, updated_at AS UpdateDate 
+    FROM Posts 
+    WHERE user_id = :user_id 
+    ORDER BY created_at DESC
+");
+$stmt->bindValue(':user_id', $user_id, SQLITE3_INTEGER);
 $articles = $stmt->execute();
 ?>
 
@@ -28,8 +43,7 @@ $articles = $stmt->execute();
           <tr>
             <th>Title</th>
             <th>Created On</th>
-            <th>Valid From</th>
-            <th>Valid To</th>
+            <th>Last Updated</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -38,12 +52,11 @@ $articles = $stmt->execute();
           <tr>
             <td><?php echo htmlspecialchars($article['Title']); ?></td>
             <td><?php echo htmlspecialchars($article['CreateDate']); ?></td>
-            <td><?php echo htmlspecialchars($article['StartDate']); ?></td>
-            <td><?php echo htmlspecialchars($article['EndDate']); ?></td>
+            <td><?php echo htmlspecialchars($article['UpdateDate']); ?></td>
             <td>
-              <a href="/crud/display/display.php?id=<?php echo urlencode($article['ArticleId']); ?>" class="btn btn-info btn-sm">View</a>
-              <a href="/crud/update/update.php?id=<?php echo urlencode($article['ArticleId']); ?>" class="btn btn-warning btn-sm">Edit</a>
-              <a href="/crud/delete/delete.php?id=<?php echo urlencode($article['ArticleId']); ?>" class="btn btn-danger btn-sm">Delete</a>
+              <a href="/crud/display/display.php?id=<?php echo urlencode($article['PostId']); ?>" class="btn btn-info btn-sm">View</a>
+              <a href="/crud/update/update.php?id=<?php echo urlencode($article['PostId']); ?>" class="btn btn-warning btn-sm">Edit</a>
+              <a href="/crud/delete/delete.php?id=<?php echo urlencode($article['PostId']); ?>" class="btn btn-danger btn-sm">Delete</a>
             </td>
           </tr>
           <?php endwhile; ?>
