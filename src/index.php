@@ -3,61 +3,6 @@
 <?php include("./inc_header.php"); ?>
 <?php include("./inc_db_params.php"); ?> 
 <?php include("./seed.php") ?>
-<!-- font -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&display=swap" rel="stylesheet">
-
-<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-<link href="landing-css.css" rel="stylesheet">
-
-<!-- Navbar START -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container">
-
-        <!-- Left Section (Row with Two Columns) -->
-        <div class="col text-center"> 
-            <a class="navbar-brand" href="#" id="navbar-home">Home</a>
-        </div>
-
-        <div class="row w-100">
-            <div class="col d-flex align-items-center">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Latest</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="./crud/create/create.php">Post</a>
-                    </li>
-                </ul>
-            </div>
-            <!-- Left Section END -->
-
-
-            <!-- Right Section (Row with Three Columns) -->
-            <div class="col d-flex justify-content-end">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/register/register.php">Register</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/login/login.php">Login</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Account
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="#">Admin Stuff?</a>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <!-- Right Section END -->
-        </div>
-    </div>
-</nav>
-<!-- Navbar END -->
 
 
 <!-- Container Start -->
@@ -69,7 +14,7 @@
             <figure id="header-banner" class="header-image-wrapper header-module">
                 <a href="/" class="header-image cover loaded imgLiquid_bgSize imgLiquid_ready">
                     <!-- Banner IMG -->
-                    <img src="/images/banner-sand.webp" alt="banner">
+                    <img src="/images/bg3.jpeg" alt="banner">
                 </a>
             </figure>
             <!-- Logo START -->

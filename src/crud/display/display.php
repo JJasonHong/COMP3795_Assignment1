@@ -1,14 +1,12 @@
-<?php include("../../inc_header.php"); ?>
-<?php include("../../inc_db_params.php"); ?>
-
-<h1>Display Article</h1>
-
 <?php
+session_start();
+include("../../inc_header.php");
+include("../../inc_db_params.php");
+
 // Initialize variables
 $articleId = $title = $body = $createDate = $startDate = $endDate = $contributorUsername = $authorName = "";
 
 if (isset($_GET['id'])) {
-    // Get article id from URL
     $id = $_GET['id'];
 
     // Prepare an SQL statement to fetch the article data with author name
@@ -22,13 +20,9 @@ if (isset($_GET['id'])) {
     ");
 
     if ($stmt) {
-        // Bind the article ID parameter as an integer
         $stmt->bindValue(':id', $id, SQLITE3_INTEGER);
-
-        // Execute the query
         $result = $stmt->execute();
 
-        // Fetch the article data
         if ($row = $result->fetchArray(SQLITE3_ASSOC)) {
             $articleId = $row['ArticleId'];
             $title = $row['Title'];
@@ -42,44 +36,54 @@ if (isset($_GET['id'])) {
             echo "<p class='alert alert-danger'>Article not found.</p>";
         }
 
-        // Finalize the result set
         $result->finalize();
     } else {
         echo "<p class='alert alert-danger'>Error preparing statement: " . $db->lastErrorMsg() . "</p>";
     }
 
-    // Close database connection
     $db->close();
 }
 ?>
 
-<div class="blogShort">
-    <h1><?php echo htmlspecialchars($title); ?></h1>
-    <img src="http://via.placeholder.com/150" alt="post img" class="pull-left img-responsive thumb margin10 img-thumbnail">
-    <article>
-        <?php echo $body; // Don't use htmlspecialchars here since we want to render HTML ?>
-        <p class="text-muted">
-            <small>Posted by: <?php echo htmlspecialchars($authorName); ?></small>
-            <br>
-            <small>Created on: <?php echo htmlspecialchars($createDate); ?></small>
-            <br>
-            <small>Valid from: <?php echo htmlspecialchars($startDate); ?> 
-                   to: <?php echo htmlspecialchars($endDate); ?></small>
-        </p>
-    </article>
-    <div class="pull-right">
-        <?php if (isset($_SESSION['username']) && 
-                 (strtolower($_SESSION['role']) === 'admin' || 
-                  $_SESSION['username'] === $contributorUsername)): ?>
-            <a href="/crud/update/update.php?id=<?php echo urlencode($articleId); ?>" 
-               class="btn btn-warning marginBottom10">Edit</a>
-            <a href="/crud/delete/delete.php?id=<?php echo urlencode($articleId); ?>" 
-               class="btn btn-danger marginBottom10">Delete</a>
-        <?php endif; ?>
+<div class="container">
+    <div class="row justify-content-center">
+        <!-- Use a wider column if needed (e.g., col-md-8) -->
+        <div class="col-md-8">
+            <!-- Display the article title centered -->
+            <h1 class="text-center mt-5"><?php echo htmlspecialchars($title); ?></h1>
+
+            <!-- Article Content -->
+            <article class="mt-4">
+
+                <p class="text-muted mt-3">
+                <p class="fs-4">
+                    Posted by: <?php echo htmlspecialchars($authorName); ?><br>
+                    Created on: <?php echo htmlspecialchars($createDate); ?><br>
+                    Valid from: <?php echo htmlspecialchars($startDate); ?> to <?php echo htmlspecialchars($endDate); ?>
+                </p>
+                <br>
+                <br>
+                <div class="fs-1">
+                    <?php echo $body; // Render HTML content 
+                    ?>
+                </div>
+                </p>
+            </article>
+
+            <!-- Edit/Delete Buttons (if permitted) -->
+            <?php if (isset($_SESSION['username']) && (strtolower($_SESSION['role']) === 'admin' || $_SESSION['username'] === $contributorUsername)): ?>
+                <div class="mt-4 text-right">
+                    <a href="/crud/update/update.php?id=<?php echo urlencode($articleId); ?>" class="btn btn-warning">Edit</a>
+                    <a href="/crud/delete/delete.php?id=<?php echo urlencode($articleId); ?>" class="btn btn-danger">Delete</a>
+                </div>
+            <?php endif; ?>
+
+            <!-- Back Button -->
+            <div class="mt-3">
+                <a href="../../main.php" class="btn btn-small btn-primary">&lt;&lt; BACK</a>
+            </div>
+        </div>
     </div>
 </div>
-
-<br />
-<a href="../../index.php" class="btn btn-small btn-primary">&lt;&lt; BACK</a>
 
 <?php include("../../inc_footer.php"); ?>

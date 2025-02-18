@@ -25,29 +25,38 @@
     overflow: hidden; /* Ensures no overflow outside the container */
     border-radius: 50px; /* Creates a pill-like shape */
     opacity: 0.7;
-  }
+}
   
-  .header-module.header-image-wrapper img {
+.header-module.header-image-wrapper img {
     width: 100%;  
     height: 100%;
     object-fit: cover; /* Crops the image */
     border-radius: 50px; /* Rounds the image to match the container */
-  }
-
-
-/* -- Navbar Styling -- */
-.navbar-nav .nav-link {
-    color: #d9b99b;
-    font-family: "DM Serif Text", serif;
 }
 
+.navbar {
+    min-height: 100px; /* Adjust as needed */
+}
+
+/* Enlarge the brand text and add extra padding */
+.navbar-brand {
+    font-size: 4rem;  /* Increase the size */
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+/* Increase nav link font size and vertical padding */
+.navbar-nav .nav-link {
+    font-size: 2.2rem; /* Increase the size */
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
 .navbar-nav .nav-link:hover {
     color: #1147db;
     font-family: "DM Serif Text", serif;
 }
 
-#navbar-home
-{
+#navbar-home {
     color: #d9b99b;
     font-family: "DM Serif Text", serif;
 }
@@ -99,10 +108,6 @@
     margin-left: 0;
 }
 
-/* -- Global Body Styling -- */
-body, .container {
-    background-color: white;
-}
 
 .page, .page-wrapper, .container::after {
     background-color: #39bbdb;
@@ -132,6 +137,7 @@ body, .container {
     padding-bottom: 20px;
     margin-bottom: 20px;
 }
+
 .add { 
     background: #333; 
     padding: 10%; 
@@ -139,11 +145,13 @@ body, .container {
     color: #fff;
     text-align: center;
 }
+
 .nav-sidebar { 
     width: 100%;
     padding: 8px 0; 
     border-right: 1px solid #ddd;
 }
+
 .nav-sidebar a {
     color: #333;
     -webkit-transition: all 0.08s linear;
@@ -151,14 +159,17 @@ body, .container {
     -o-transition: all 0.08s linear;
     transition: all 0.08s linear;
 }
+
 .nav-sidebar .active a { 
     cursor: default;
     background-color: #34ca78; 
     color: #fff; 
 }
+
 .nav-sidebar .active a:hover {
     background-color: #37D980;   
 }
+
 .nav-sidebar .text-overflow a,
 .nav-sidebar .text-overflow .media-body {
     white-space: nowrap;
@@ -166,6 +177,7 @@ body, .container {
     -o-text-overflow: ellipsis;
     text-overflow: ellipsis; 
 }
+
 .btn-blog {
     color: #ffffff;
     background-color: #37d980;
@@ -173,6 +185,7 @@ body, .container {
     border-radius: 0;
     margin-bottom: 10px;
 }
+
 .btn-blog:hover,
 .btn-blog:focus,
 .btn-blog:active,
@@ -182,5 +195,21 @@ body, .container {
     background-color: #34ca78;
     border-color: #34ca78;
 }
-h2 { color: #34ca78; }
-.margin10 { margin-bottom: 10px; margin-right: 10px; }
+
+h2 { 
+    color: #34ca78; 
+}
+
+.margin10 { 
+    margin-bottom: 10px; 
+    margin-right: 10px; 
+}
+
+/* Additional Styles from Given Snippet */
+body {
+    background-color: #d9b99b;
+}
+
+#blog {
+    background-color: #faf0e6;
+}

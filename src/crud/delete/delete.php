@@ -61,7 +61,7 @@ if (isset($_GET['id'])) {
 <br />
 <form action="process_delete.php" method="post">
     <input type="hidden" value="<?php echo htmlspecialchars($postId); ?>" name="id" />
-    <a href="../../index.php" class="btn btn-small btn-primary">&lt;&lt; BACK</a>
+    <a href="../../main.php" class="btn btn-small btn-primary">&lt;&lt; BACK</a>
     &nbsp;&nbsp;&nbsp;
     <input type="submit" value="Delete" class="btn btn-danger" />
 </form>

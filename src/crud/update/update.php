@@ -66,7 +66,7 @@ if (isset($_GET['id'])) {
             </div>
 
             <div class="form-group">
-                <a href="../../index.php" class="btn btn-small btn-primary">&lt;&lt; BACK</a>
+                <a href="../../main.php" class="btn btn-small btn-primary">&lt;&lt; BACK</a>
                 &nbsp;&nbsp;&nbsp;
                 <input type="submit" value="Update" name="update" class="btn btn-warning" />
             </div>

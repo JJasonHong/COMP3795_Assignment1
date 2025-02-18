@@ -98,7 +98,7 @@ $users = $db->query("SELECT id, username, firstName, lastName, role, isApproved 
 </table>
 
 <div class="mt-3">
-    <a href="../index.php" class="btn btn-primary">
+    <a href="../main.php" class="btn btn-primary">
         <i class="glyphicon glyphicon-arrow-left"></i> Back to Home
     </a>
 </div>
