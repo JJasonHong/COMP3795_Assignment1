@@ -5,7 +5,7 @@ session_start();
 $_SESSION['debug'] = "Reached process_login.php\n";
 
 /* Require Database Connection */
-require_once "../inc_db_params.php";
+require_once "/inc_db_params.php";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $email = trim($_POST["email"]);
