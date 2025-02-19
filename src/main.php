@@ -80,6 +80,7 @@
         </div>
 
         <!-- Blog Posts -->
+         <h1>Latest Posts</h1>
         <div class="col-sm-9">
             <?php
             if ($db !== FALSE) {
