@@ -213,3 +213,32 @@ body {
 #blog {
     background-color: #faf0e6;
 }
+
+form {
+    background-color: #faf0e6;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.table {
+    background-color: green;
+    padding: 10px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+h1 {
+    font-family: "DM Serif Text", serif;
+    font-size: 3rem;
+    font-weight: bold;
+    color: #8B4513; /* Warm brown to match your theme */
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+}
+
+p
+{
+    font-family: 'Inter', sans-serif;
+    font-weight:lighter;
+    font-size: 2rem;
+}
