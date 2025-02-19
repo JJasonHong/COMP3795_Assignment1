@@ -44,7 +44,7 @@ if (!isset($_SESSION['username'])) {
               <input type="hidden" name="ContributorUsername" value="<?php echo htmlspecialchars($_SESSION['username']); ?>" />
 
               <div class="form-group">
-                  <a href="../../main.php" class="btn btn-small btn-primary">&lt;&lt; BACK</a>
+                  <a href="./main.php" class="btn btn-small btn-primary">&lt;&lt; BACK</a>
                   &nbsp;&nbsp;&nbsp;
                   <input type="submit" value="Create" name="create" class="btn btn-success" />
               </div>

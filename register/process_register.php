@@ -1,123 +1,61 @@
 <?php
 session_start();
 
-/**
- * If the debug session variable doesn't exist, initialize it so we can append.
- */
-if (!isset($_SESSION['debug'])) {
-    $_SESSION['debug'] = "";
-}
+// Debug: capture that we reached the script
+$_SESSION['debug'] = "Reached process_register.php\n";
 
-/**
- * Record that we've entered the script
- */
-$_SESSION['debug'] .= "Reached process_register.php in " . __DIR__ . "\n";
+// Require Database Connection
+require_once "../inc_db_params.php";
 
-/* Require/Include */
-require_once "../inc_db_params.php";   // Adjust path if needed
-require_once "../utils.php";           // Contains your validation functions, etc.
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $firstName = trim($_POST["firstName"]);
+    $lastName = trim($_POST["lastName"]);
+    $email = trim($_POST["email"]);
+    $password = $_POST["password"];
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT); // Hash password
 
-// Check if user is already logged in
-if (isset($_SESSION['username'])) {
-    $_SESSION['debug'] .= "User already logged in as {$_SESSION['username']}.\n";
-    $_SESSION['error'] = "You're already signed in, please log out first.";
-    header("Location: /index.php");
-    exit();
-}
+    $_SESSION['debug'] .= "Received form data: \nFirst Name: $firstName\nLast Name: $lastName\nEmail: $email\n";
 
-// Note the request method
-$_SESSION['debug'] .= "Request method: {$_SERVER["REQUEST_METHOD"]}\n";
+    try {
+        $_SESSION['debug'] .= "Attempting DB connection using sqlite:../blog3795.sqlite\n";
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") 
-{
-    // Grab form inputs
-    $email      = trim($_POST["email"]);
-    $password   = $_POST["password"];
-    $first_name = trim($_POST["first_name"]);
-    $last_name  = trim($_POST["last_name"]);
-
-    // Record inputs (excluding raw password for security)
-    $_SESSION['debug'] .= "User submitted email: {$email}\n";
-    $_SESSION['debug'] .= "User submitted firstName: {$first_name}, lastName: {$last_name}\n";
-    $_SESSION['debug'] .= "Password length: " . strlen($password) . "\n";
-
-    // Validate Email
-    $_SESSION['debug'] .= "Validating email...\n";
-    $error_message = "";
-    if (!is_valid_email($email, $error_message)) 
-    {
-        $_SESSION['debug'] .= "Email validation failed: {$error_message}\n";
-        $_SESSION['error'] = $error_message;
-        header("Location: /register/register.php");
-        exit();
-    }
-
-    // Validate password complexity
-    $_SESSION['debug'] .= "Validating password...\n";
-    if (!validate_password($password, $error_message)) 
-    {
-        $_SESSION['debug'] .= "Password validation failed: {$error_message}\n";
-        $_SESSION['error'] = $error_message;
-        header("Location: /register/register.php");
-        exit();
-    }
-
-    // Hash the password before storing
-    $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-    $_SESSION['debug'] .= "Password hashed successfully.\n";
-
-    try 
-    {
-        $_SESSION['debug'] .= "Connecting to DB with sqlite:../blog3795.sqlite\n";
-        // If your sqlite file is actually 2 levels above, you might use ../../
-        $db = new PDO("sqlite:../blog3795.sqlite");
+        // Connect to SQLite
+        $db = new PDO("sqlite:" . __DIR__ . "/../blog3795.sqlite");
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         $_SESSION['debug'] .= "DB connection successful.\n";
 
-        // Check if email already exists
-        $_SESSION['debug'] .= "Checking if email is already registered...\n";
-        $stmt = $db->prepare("SELECT COUNT(*) FROM users WHERE username = ?");
-        if (!$stmt) {
-            $_SESSION['debug'] .= "Statement preparation failed: " . print_r($db->errorInfo(), true) . "\n";
-        }
+        // Check if user already exists
+        $_SESSION['debug'] .= "Checking if email already exists...\n";
+        $stmt = $db->prepare("SELECT id FROM Users WHERE username = ?");
         $stmt->execute([$email]);
-        $count = $stmt->fetchColumn();
-        $_SESSION['debug'] .= "Existing users with that email: {$count}\n";
+        $existingUser = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($count > 0) {
-            $_SESSION['debug'] .= "Email is already registered.\n";
-            $_SESSION['error'] = "Email is already registered.";
-            header("Location: /register/register.php");
+        if ($existingUser) {
+            $_SESSION['error'] = "Email already registered.";
+            $_SESSION['debug'] .= "Email already exists. Redirecting to register.\n";
+            header("Location: register.php");
             exit();
         }
 
-        // Insert new user (isApproved=0, role='contributor')
-        $_SESSION['debug'] .= "Inserting new user into database...\n";
-        $stmt = $db->prepare("
-            INSERT INTO users (username, password, firstName, lastName, registrationDate, isApproved, role) 
-            VALUES (?, ?, ?, ?, datetime('now'), 0, 'contributor')
-        ");
-        $stmt->execute([$email, $hashed_password, $first_name, $last_name]);
+        // Insert new user
+        $_SESSION['debug'] .= "Inserting new user...\n";
+        $stmt = $db->prepare("INSERT INTO Users (firstName, lastName, username, password, role, isApproved) VALUES (?, ?, ?, ?, 'user', 0)");
+        $stmt->execute([$firstName, $lastName, $email, $hashedPassword]);
 
-        $_SESSION['debug'] .= "User inserted successfully.\n";
-        $_SESSION['message'] = "Registration successful! Waiting for admin approval.";
-        $_SESSION['debug'] .= "Redirecting to /login/login.php\n";
-        
-        header("Location: /login/login.php");
+        $_SESSION['debug'] .= "User successfully registered. Redirecting to login.\n";
+
+        $_SESSION['success'] = "Registration successful! Please wait for approval.";
+        header("Location: login.php");
         exit();
-    } 
-    catch (PDOException $e) 
-    {
+    } catch (PDOException $e) {
         $_SESSION['error'] = "Database error: " . $e->getMessage();
-        $_SESSION['debug'] .= "PDOException: " . $e->getMessage() . "\n";
-        header("Location: /register/register.php");
+        $_SESSION['debug'] .= "Caught PDOException: " . $e->getMessage() . "\n";
+        header("Location: register.php");
         exit();
     }
-} 
-else 
-{
-    $_SESSION['debug'] .= "Request method not POST; redirecting to /register/register.php\n";
-    header("Location: /register/register.php");
+} else {
+    $_SESSION['debug'] .= "Request method not POST, redirecting to register.\n";
+    header("Location: register.php");
     exit();
 }
