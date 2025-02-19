@@ -19,7 +19,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&display=swap" rel="stylesheet">
 
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-    <link href="landing-css.css" rel="stylesheet">
+    <link href="../landing-css.css" rel="stylesheet">
 </head>
 
 <body>
@@ -39,7 +39,7 @@
                                 <a class="nav-link" href="/main.php">Latest</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="./crud/create/create.php">Post</a>
+                                <a class="nav-link" href="crud/create/create.php">Post</a>
                             </li>
                         <?php endif; ?>
                     </ul>

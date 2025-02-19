@@ -17,7 +17,7 @@ if (isset($_SESSION['username'])) {
 <div class="container">
   <div class="row justify-content-center">
     <div class="col-md-6">
-      <h2 class="mt-5 text-center">Login</h2>
+      <h1 class="mt-5 text-center">Login</h1>
 
       <!-- Display Errors -->
       <?php

@@ -80,6 +80,7 @@
         </div>
 
         <!-- Blog Posts -->
+         <h1>Latest Posts</h1>
         <div class="col-sm-9">
             <?php
             if ($db !== FALSE) {
@@ -145,10 +146,6 @@
                 $db->close();
             }
             ?>
-            <!-- Back button aligned with the blog content -->
-            <p class="mt-3">
-                <a href="/" class="btn btn-small btn-primary">&lt;&lt; BACK</a>
-            </p>
         </div>
     </div>
 </div>
