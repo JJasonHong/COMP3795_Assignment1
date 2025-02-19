@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("../inc_header.php");
+include("../inc_header_contributor.php");
 include("../inc_db_params.php");
 
 // Redirect if user is not logged in
