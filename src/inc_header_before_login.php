@@ -39,7 +39,7 @@
                                 <a class="nav-link" href="/main.php">Latest</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="./crud/create/create.php">Post</a>
+                                <a class="nav-link" href="crud/create/create.php">Post</a>
                             </li>
                         <?php endif; ?>
                     </ul>

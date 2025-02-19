@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("../../inc_header.php");
+include("../../inc_header_display.php");
 include("../../inc_db_params.php");
 
 // Initialize variables
