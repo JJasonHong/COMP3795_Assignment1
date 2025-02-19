@@ -53,7 +53,7 @@
                             <a class="nav-link" href="/register/register.php">Register</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/login/login.php">Login</a>
+                            <a class="nav-link" href="./login/login.php">Login</a>
                         </li>
 
                     </ul>
