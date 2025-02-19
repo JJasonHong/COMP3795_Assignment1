@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST")
     {
         $_SESSION['debug'] .= "Email validation failed: {$error_message}\n";
         $_SESSION['error'] = $error_message;
-        header("Location: register.php");
+        header("Location: /register/register.php");
         exit();
     }
 
@@ -52,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST")
     {
         $_SESSION['debug'] .= "Password validation failed: {$error_message}\n";
         $_SESSION['error'] = $error_message;
-        header("Location: register.php");
+        header("Location: /register/register.php");
         exit();
     }
 
@@ -79,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST")
         {
             $_SESSION['debug'] .= "Email is already registered.\n";
             $_SESSION['error'] = "Email is already registered.";
-            header("Location: register.php");
+            header("Location: /register/register.php");
             exit();
         }
 
@@ -100,13 +100,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST")
     {
         $_SESSION['error'] = "Database error: " . $e->getMessage();
         $_SESSION['debug'] .= "PDOException: " . $e->getMessage() . "\n";
-        header("Location: register.php");
+        header("Location: /register/register.php");
         exit();
     }
 } 
 else 
 {
     $_SESSION['debug'] .= "Request method not POST; redirecting to register.\n";
-    header("Location: register.php");
+    header("Location: /register/register.php");
     exit();
 }
