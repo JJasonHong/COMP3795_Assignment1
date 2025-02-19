@@ -62,9 +62,9 @@ if (isset($_GET['id'])) {
             <!-- Article Content -->
             <article class="mt-4">
                 <p class="text-muted mt-3">
-                    <span class="fs-4">Posted by: <?php echo htmlspecialchars($authorName); ?></span><br>
-                    <span class="fs-5">Created on: <?php echo htmlspecialchars($createDate); ?></span><br>
-                    <span class="fs-5">Valid from: <?php echo htmlspecialchars($startDate); ?> to <?php echo htmlspecialchars($endDate); ?></span>
+                    <span class="fs-2">Posted by: <?php echo htmlspecialchars($authorName); ?></span><br>
+                    <span class="fs-3">Created on: <?php echo htmlspecialchars($createDate); ?></span><br>
+                    <span class="fs-3">Valid from: <?php echo htmlspecialchars($startDate); ?> to <?php echo htmlspecialchars($endDate); ?></span>
                 </p>
                 <br>
                 <!-- Render the article body (allowing HTML) -->
@@ -74,7 +74,7 @@ if (isset($_GET['id'])) {
             </article>
 
             <!-- Edit/Delete Buttons (if permitted) -->
-            <?php
+            <?php 
             // Only allow Edit/Delete if the user is an admin or the article contributor
             if ($loggedInUser && (strtolower($_SESSION['role']) === 'admin' || $loggedInUser === $contributorUsername)): ?>
                 <div class="mt-4 text-right">
