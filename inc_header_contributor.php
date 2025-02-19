@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Students CRUD</title>
+    <title>Assignment1 Gem, Brian, Jason</title>
     <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
