@@ -93,7 +93,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST")
 
         $_SESSION['message'] = "Registration successful! Waiting for admin approval.";
         $_SESSION['debug'] .= "User registered successfully. Redirecting to /login.php\n";
-        header("Location: ../login/login.php");
+        header("Location: /login/login.php");
         exit();
     } 
     catch (PDOException $e) 
