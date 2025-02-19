@@ -11,7 +11,7 @@ if (isset($_SESSION['username']))
 {
     // TODO: NOT WORKING
    $_SESSION[$error_message] = "You're already signed in, please log out first";
-    header("Location: ../index.php");
+    header("Location: /index.php");
     exit();
 }
 ?>
@@ -65,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST")
         $stmt->execute([$email, $hashed_password, $first_name, $last_name]);
 
         $_SESSION['message'] = "Registration successful! Waiting for admin approval.";
-        header("Location: ../login.php");
+        header("Location: /login.php");
         exit();
     } 
     
