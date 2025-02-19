@@ -146,10 +146,6 @@
                 $db->close();
             }
             ?>
-            <!-- Back button aligned with the blog content -->
-            <p class="mt-3">
-                <a href="/" class="btn btn-small btn-primary">&lt;&lt; BACK</a>
-            </p>
         </div>
     </div>
 </div>
