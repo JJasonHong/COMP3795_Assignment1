@@ -70,3 +70,17 @@ if (isset($_SESSION['username'])) {
 
 <?php include("../inc_footer.php"); ?>
 <!-- Registration Page END -->
+
+<?php
+echo "<style>
+        body {
+            background-color: #d9b99b;
+        }
+
+        form {
+            background-color: #faf0e6;
+            padding: 10px;
+            border-radius: 10px;
+        }
+      </style>";
+?>
