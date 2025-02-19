@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $_SESSION['role']      = $user['role'];
                 $_SESSION['firstName'] = $user['firstName'];
                 $_SESSION['lastName'] = $user['lastName']; // Store the firstName in session
-                header("Location: ../main.php");
+                header("Location: /main.php");
                 exit();
             } else {
                 $_SESSION['error'] = "Your account is pending approval.";
