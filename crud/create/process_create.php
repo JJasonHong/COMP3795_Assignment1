@@ -33,13 +33,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['create'])) {
             INSERT INTO Articles (Title, Body, StartDate, EndDate, ContributorUsername) 
             VALUES (?, ?, ?, ?, ?)
         ");
-        
+
         $stmt->execute([$title, $body, $startDate, $endDate, $contributorUsername]);
 
         $_SESSION['message'] = "Article created successfully.";
         header("Location: ../../main.php");
         exit();
-
     } catch (PDOException $e) {
         $_SESSION['error'] = "Database error: " . $e->getMessage();
         header("Location: create.php");
