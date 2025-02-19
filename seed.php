@@ -20,7 +20,7 @@ if ($db) {
         ArticleId INTEGER PRIMARY KEY AUTOINCREMENT,
         Title TEXT NOT NULL,
         Body TEXT NOT NULL,
-        CreatDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+        CreatDate DATETIME DEFAULT (datetime('now', 'localtime')),
         StartDate DATE,
         EndDate DATE,
         ContributorUsername TEXT NOT NULL

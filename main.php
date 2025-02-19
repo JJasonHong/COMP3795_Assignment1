@@ -80,7 +80,7 @@
         </div>
 
         <!-- Blog Posts -->
-         <h1>Latest Posts</h1>
+        <h1>Latest Posts</h1>
         <div class="col-sm-9">
             <?php
             if ($db !== FALSE) {
@@ -97,6 +97,7 @@
                         u.firstName || ' ' || u.lastName AS authorName
                     FROM Articles a
                     LEFT JOIN Users u ON a.ContributorUsername = u.username
+                    WHERE DATE('now') BETWEEN a.StartDate AND a.EndDate
                     ORDER BY a.CreatDate DESC
                 ";
                 $QueryResult = $db->query($SQLstring);
@@ -110,8 +111,8 @@
                                 <p>
                                     <?php
                                     // Display a snippet (first 150 characters) of the content
-                                    $snippet = substr($row['Body'], 0, 150);
-                                    echo htmlspecialchars($snippet) . (strlen($row['Body']) > 150 ? "..." : "");
+                                    $snippet = substr($row['Body'], 0, 100);
+                                    echo htmlspecialchars($snippet) . (strlen($row['Body']) > 100 ? "..." : "");
                                     ?>
                                 </p>
                                 <p class="text-muted">
