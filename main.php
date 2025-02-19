@@ -58,9 +58,6 @@
                             <a href="./crud/create/create.php" class="btn btn-small btn-success">Create New Post</a>
                         </li>
                     <?php else: ?>
-                        <!-- Show these items when not logged in -->
-                        <!-- <li><a href="login/login.php">Login</a></li>
-                        <li><a href="register/register.php">Register</a></li> -->
                     <?php endif; ?>
                     <li class="nav-divider"></li>
                 </ul>

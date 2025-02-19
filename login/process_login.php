@@ -26,11 +26,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         // Fetch user by email
         $_SESSION['debug'] .= "Preparing SELECT: 'SELECT id, password, role, isApproved, firstName, lastName FROM Users WHERE username = ?'\n";
         $stmt = $db->prepare("SELECT id, password, role, isApproved, firstName, lastName FROM Users WHERE username = ?");
-        
+
         if (!$stmt) {
             $_SESSION['debug'] .= "Statement preparation failed: " . print_r($db->errorInfo(), true) . "\n";
         }
-        
+
         // Execute statement
         $stmt->execute([$email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
