@@ -9,6 +9,9 @@ if (!isset($_SESSION['username'])) {
   exit();
 }
 
+// Set the default timezone - adjust to your local timezone if needed
+date_default_timezone_set('America/Vancouver'); // Adjust this to your timezone
+
 // We'll use the logged-in user's email (username) to find their articles
 $contributorUsername = $_SESSION['username'];
 
@@ -48,7 +51,17 @@ $articles = $stmt->execute();
           <?php while ($article = $articles->fetchArray(SQLITE3_ASSOC)): ?>
             <tr>
               <td><?php echo htmlspecialchars($article['Title']); ?></td>
-              <td><?php echo htmlspecialchars($article['CreatDate']); ?></td>
+              <td>
+                <?php 
+                  // Format the datetime with proper timezone conversion
+                  // First create DateTime object with UTC timezone since SQLite stores in UTC
+                  $createDate = new DateTime($article['CreatDate'], new DateTimeZone('UTC'));
+                  // Then convert to the local timezone
+                  $createDate->setTimezone(new DateTimeZone('America/Vancouver'));
+                  // Format using H (24-hour format) to clearly show the correct time
+                  echo htmlspecialchars($createDate->format('Y-m-d H:i')); 
+                ?>
+              </td>
               <td><?php echo htmlspecialchars($article['StartDate']); ?></td>
               <td><?php echo htmlspecialchars($article['EndDate']); ?></td>
               <td>
