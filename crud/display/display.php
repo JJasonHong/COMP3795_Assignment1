@@ -3,6 +3,9 @@ session_start();
 include("../../inc_header_display.php");
 include("../../inc_db_params.php");
 
+// Set the default timezone
+date_default_timezone_set('America/Vancouver');
+
 // Initialize variables
 $articleId = $title = $body = $createDate = $authorName = "";
 $loggedInUser = $_SESSION['username'] ?? null;
@@ -63,7 +66,14 @@ if (isset($_GET['id'])) {
             <article class="mt-4">
                 <p class="text-muted mt-3">
                     <span class="fs-2">Posted by: <?php echo htmlspecialchars($authorName); ?></span><br>
-                    <span class="fs-3">Created on: <?php echo htmlspecialchars($createDate); ?></span><br>
+                    <span class="fs-3">Created on: 
+                        <?php 
+                            // Format the datetime with proper timezone conversion
+                            $dateObj = new DateTime($createDate, new DateTimeZone('UTC'));
+                            $dateObj->setTimezone(new DateTimeZone('America/Vancouver'));
+                            echo htmlspecialchars($dateObj->format('Y-m-d H:i')); 
+                        ?>
+                    </span><br>
                     <span class="fs-3">Valid from: <?php echo htmlspecialchars($startDate); ?> to <?php echo htmlspecialchars($endDate); ?></span>
                 </p>
                 <br>
