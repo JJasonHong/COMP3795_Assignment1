@@ -29,22 +29,25 @@
                     // Query to fetch all articles along with the author's name (if any).
                     $SQLstring = "
                         SELECT 
-                            a.ArticleId,
-                            a.Title,
-                            a.Body,
-                            a.CreatDate,
+                            a.ArticleId, 
+                            a.Title, 
+                            a.Body, 
+                            a.CreatDate AS CreateDate, 
+                            a.StartDate, 
+                            a.EndDate,
                             a.ContributorUsername,
                             u.firstName || ' ' || u.lastName AS authorName
                         FROM Articles a
                         LEFT JOIN Users u ON a.ContributorUsername = u.username
+                        WHERE DATE('now') BETWEEN a.StartDate AND a.EndDate
                         ORDER BY a.CreatDate DESC
                     ";
                     $QueryResult = $db->query($SQLstring);
 
                     if ($QueryResult) {
                         while ($row = $QueryResult->fetchArray(SQLITE3_ASSOC)) {
-                            // Display first 150 characters as a snippet
-                            $snippet = substr($row['Body'], 0, 150);
+                            // Display a snippet (first 100 characters) of the content
+                            $snippet = substr($row['Body'], 0, 100);
                 ?>
                             <div class="blogShort">
                                 <h1><?php echo htmlspecialchars($row['Title']); ?></h1>
@@ -52,24 +55,14 @@
                                 <article>
                                     <p>
                                         <?php
-                                        echo htmlspecialchars($snippet) . (strlen($row['Body']) > 150 ? "..." : "");
+                                        echo htmlspecialchars($snippet) . (strlen($row['Body']) > 100 ? "..." : "");
                                         ?>
                                     </p>
                                 </article>
-
-                                <?php if (isset($_SESSION['username'])): ?>
-                                    <!-- If the user is logged in, link directly to the display page -->
-                                    <a class="btn btn-blog pull-right marginBottom10" 
-                                       href="/crud/display/display.php?id=<?php echo urlencode($row['ArticleId']); ?>">
-                                        READ MORE
-                                    </a>
-                                <?php else: ?>
-                                    <!-- If the user is not logged in, prompt them to log in first -->
-                                    <a class="btn btn-blog pull-right marginBottom10" 
-                                       href="/login/login.php?redirect=<?php echo urlencode('/crud/display/display.php?id=' . $row['ArticleId']); ?>">
-                                        READ MORE
-                                    </a>
-                                <?php endif; ?>
+                                <p class="text-muted">
+                                    <small>Posted by: <?php echo htmlspecialchars($row['authorName']); ?></small>
+                                </p>
+                                <a class="btn btn-blog pull-right marginBottom10" href="/crud/display/display.php?id=<?php echo urlencode($row['ArticleId']); ?>">READ MORE</a>
                             </div>
                 <?php
                         }
